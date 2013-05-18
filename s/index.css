@@ -1,0 +1,175 @@
+@font-face {
+	font-family: 'Architects Daughter';
+	src: url(ArchitectsDaughter.ttf) format("truetype");
+}
+
+html {
+	background: #333;
+	color: #dfdfdf;
+}
+
+body { 
+	font-family: 'Architects Daughter';
+}
+
+header {
+	height: 3em;
+	position: relative;
+}
+header>p {
+	position: absolute;
+	top: 0;
+	display: none;
+}
+#huiir {
+	letter-spacing: 2px;
+}
+#hult {
+	letter-spacing: 0.5px;
+	white-space: nowrap;
+}
+button {
+	font-family: 'Architects Daughter';
+}
+
+
+#shellWidth {
+	display: none;
+	margin: 0 auto;
+	padding: 0;
+	text-align: center;
+	width: 320px
+}
+
+#shellWidth>* {
+	text-align: left;
+}
+
+.cv {
+	margin: 0; 
+	padding: 0; 
+}
+
+.canvas_frame {
+	position: relative;
+}
+.canvas_frame, .canvas_backing, .canvas_blacking { 
+	height: 160px;
+	width: 320px;
+}
+.canvas_backing { 
+/*	background: #dedede url('../i/water.gif') 0 0; */
+	background: #dedede url('../i/aniwater.png') 0 0; 
+}
+.canvas_blacking {
+	background: #333;
+}
+canvas, .canvas_blacking {
+	position: absolute; 
+	top: 0;
+}
+#youAreDead {
+	position: absolute;
+	text-align: center;
+	top: 75px;
+	width: 100%;
+}
+#youAreDead>* {
+	background: #333;
+	display: inline;
+	padding: 1px 4px;
+}
+
+#cmd_queue_shell { 
+	border: solid 1px #3f3f3f;
+	direction: rtl;
+	height: 5.5em;
+	overflow: auto;
+	margin-right: 102px; 
+}
+#cmd_queue {
+	direction: ltr;
+	font-size: .82em;
+	padding: 0 0.2em;
+}
+
+table.cursor, table.keys {
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+.keys td button, .cursor td, .cursor td button {
+	height: 20px;
+	margin: 0;
+	padding: 0;
+	width: 20px;
+}
+td button { 
+	line-height: 1em;
+}
+
+.cursor td button {
+	font-family: webdings;
+}
+
+td.alpharow {
+	padding-left: 20px;
+	width: 220px;
+}
+
+td.alpharow span {
+	display: inline-block;
+}
+td.alpharow span.row2 {
+	width: 10px;
+}
+td.alpharow span.row3 {
+	width: 20px;
+}
+.nv {
+	visibility: hidden;
+}
+
+div, section {
+	margin: 0;
+	padding: 0;
+}
+
+section, .gap {
+	padding-bottom: 1em;
+}
+.nobr {
+	white-space: nowrap;
+}
+.half {
+	width: 50%;
+}
+
+.right { 
+	float: right;
+}
+.left {
+	float: left;
+}
+
+.aright {
+	text-align: right;
+}
+
+.clear {
+	clear: both;
+}
+
+label {
+	font-family: 'Courier New';
+	font-weight: bold;
+	display: inline-block;
+	margin-right: 0.25em;
+}
+div.tools span {
+	display: inline-block;
+	text-align: left;
+	width: 45px;
+}
+
+em { display: inline-block; padding-bottom: 4px; width: 50px; text-align: right; }

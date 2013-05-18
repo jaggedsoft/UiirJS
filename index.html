@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>html authoring with surface isn't easy!</title>
+	<link rel="stylesheet" href="./s/index.css" type="text/css" />
+</head>
+<body>
+<div id="shellWidth">
+	<header>
+		<p id="huiir">Uiir</p>
+		<p id="hult">Ultima ][ - Revenge of the Enchantress</p>
+	</header>
+	<div data-bind="visible: showLoading">
+		<section style="padding-top: 6em; text-align: center;">
+			<span>Loading...</span>
+		</section>
+	</div>
+	<div data-bind="visible: showGame">
+
+		<div data-bind="visible: showSpace">
+			<section>Canvases here</section>
+			<section>x y z</section>
+			<p>Maybe this is the wrong way to do this?</p>
+			<p>H to hyper</p>
+		</div>
+
+		<section class='canvas_frame'>
+			<div id="backer" class="cv canvas_backing">
+			<canvas height="160" width="320" class="cv" id="canvas_one"><span>No canvas for you.</span></canvas>
+			<canvas height="160" width="320" class="cv" id="canvas_two"><span>No canvas for you.</span></canvas>
+			</div>
+			<div id="blacker" class="cv canvas_blacking"></div>
+			<div id="youAreDead" data-bind="visible: player.isDead"><strong class="nobr"><span data-bind='text: player.name'>[player_name]</span> is dead.</strong></div>
+		</section>
+		
+
+		<div>
+			<section data-bind="with: player" class="basics right">
+				<div><label>HITS:</label><span data-bind="text: hits" id="sHits"></span></div>
+				<div><label>GOLD:</label><span data-bind="text: gold" id="sGold"></span></div>
+				<div><label>FOOD:</label><span data-bind="text: food" id="sFood"></span></div>
+				<div><label>EXPR:</label><span data-bind="text: expr" id="sExpr"></span></div>
+			</section>
+			<div id='cmd_queue_shell'><div id='cmd_queue'>
+			</div></div>
+		</div>
+
+		<section>
+			<table class="keys" cellpadding="0" cellspacing="0"><tr>
+				<td class='alpharow'>
+					<button data-bind="click: n1">1</button><button data-bind="click: n2">2</button><button data-bind="click: n3">3</button><button data-bind="click: n4">4</button><button data-bind="click: n5">5</button><button data-bind="click: n6">6</button><button data-bind="click: n7">7</button><button data-bind="click: n8">8</button><button data-bind="click: n9">9</button><button data-bind="click: n0">0</button>
+				</td>
+			</tr><tr>
+				<td class='alpharow'>
+					<button data-bind="click: Q">Q</button><button data-bind="click: W">W</button><button data-bind="click: E">E</button><button data-bind="click: R">R</button><button data-bind="click: T">T</button><button data-bind="click: Y">Y</button><button data-bind="click: U">U</button><button data-bind="click: I">I</button><button data-bind="click: O">O</button><button data-bind="click: P">P</button>
+				</td>
+			</tr><tr>
+				<td class='alpharow'><span class='row2'></span><button data-bind="click: A">A</button><button data-bind="click: S">S</button><button data-bind="click: D">D</button><button data-bind="click: F">F</button><button data-bind="click: G">G</button><button data-bind="click: H">H</button><button data-bind="click: J">J</button><button data-bind="click: K">K</button><button data-bind="click: L">L</button>
+				</td>
+			</tr><tr>
+				<td class='alpharow'><span class='row3'></span><button data-bind="click: Z">Z</button><button data-bind="click: X">X</button><button data-bind="click: C">C</button><button data-bind="click: V">V</button><button data-bind="click: B">B</button><button data-bind="click: N">N</button><button data-bind="click: M">M</button>
+				</td>
+			</tr></table>
+
+			<table class="cursor" cellpadding="0" cellspacing="0"><tr>
+				<td></td>
+				<td><button data-bind="click: up">5</button></td>
+				<td></td>
+				<td rowspan='3'></td>
+			</tr><tr>
+				<td><button data-bind="click: left">3</button></td>
+				<td><button class="nv"></button></td>
+				<td><button data-bind="click: right">4</button></td>
+			</tr><tr>
+				<td></td>
+				<td><button data-bind="click: down">6</button></td>
+				<td></td>
+			</tr></table>
+			<div class='clear'></div> 
+		</section>
+	</div>
+	<div data-bind="visible: showZats">
+		<section data-bind="with: player">
+			<div class="gap"><button class="right" data-bind="click: $parent.Z">Resume</button><span data-bind="text: name" id="sName"></span>: level <span data-bind="text: level" id="sLevel">#</span> 
+					<span class='nobr'><span data-bind="text: description.gender" id="sGender"></span> <span data-bind="text: description.race" id="sRace"></span> <span data-bind="text: description.type" id="sType"></span></span></div>
+			
+			<div class="gap left half">
+				<div><label>AGI:</label><span data-bind="text: stats.agility" id="sAgility"></span></div>
+				<div><label>STR:</label><span data-bind="text: stats.strength" id="sStrength"></span></div>
+				<div><label>STA:</label><span data-bind="text: stats.stamina" id="sStamina"></span></div>
+				<div><label>INT:</label><span data-bind="text: stats.intelligence" id="sIntelligence"></span></div>
+				<div><label>WIS:</label><span data-bind="text: stats.wisdom" id="sWisdom"></span></div>
+				<div><label>CHA:</label><span data-bind="text: stats.charisma" id="sCharisma"></span></div>
+			</div>
+			<div class="gap right aright half">
+				<div class="tools"><label>KEYS:</label><span data-bind="text: tools.keys" id="sTool1"></span></div>
+				<div class="tools"><label>TOOLS:</label><span data-bind="text: tools.tools" id="sTool2"></span></div>
+				<div class="tools"><label>TORCHES:</label><span data-bind="text: tools.torches" id="sTool3"></span></div>
+			</div>
+			<div class="gap clear">
+				<div><label>EQUIPPED</label></div>
+				<div><label>WEAPON:</label><span id="sEquippedWeapon"></span></div>
+				<div><label>ARMOR:</label><span id="sEquippedArmor"></span></div>
+				<div><label>SPELL:</label><span id="sEquippedSpell"></span></div>
+			</div>
+			<div class="gap">
+				<label>WEAPONS:</label>
+				<span data-bind="text: weaponsList" id="sWeapons"></span>
+			</div>
+			<div class="gap">
+				<label>ARMOR:</label><span data-bind="text: armorList" id="sArmor"></span>
+			</div>
+			<div class="gap">
+				<label>SPELLS:</label><span data-bind="text: spellsList" id="sSpells"></span>
+			</div>
+			<div>
+				<label>INVENTORY:</label><span data-bind="text: inventoryList" id="sInventory"></span>
+			</div>
+		</section>
+	</div>
+	<section class="nv">
+			<h3>vehicles</h3>
+			<script>
+			function canPass() {
+				var t = document.getElementById('tinp').value * 1;
+				var o = document.getElementById('passable');
+				var foot = uiir.vehicles.onFoot;
+				var plane = uiir.vehicles.plane;
+				var rocket = uiir.vehicles.rocket;
+				var boat = uiir.vehicles.boat;
+				var horse = uiir.vehicles.horse;
+				var output = '';
+				
+				output += foot.isPassable(t) ? 'f' : '-';
+				output += plane.isPassable(t) ? 'p' : '-';
+				output += rocket.isPassable(t) ? 'r' : '-';
+				output += boat.isPassable(t) ? 'b' : '-';
+				output += horse.isPassable(t) ? 'h' : '-';
+				o.innerText = output;
+			}
+			function mocanPass() {
+				var v = new uiir.vehicles.Vehicle(8,0);
+			}
+			</script>
+			<div>
+				<input id='tinp' type='number'/>
+				<button onclick='canPass();'>P?</button>
+				<span id='passable'></span></div>
+	</section>
+</div>
+	<script src="./lib/jquery-1.9.1.min.js"></script>
+	<script src="./lib/knockout-2.2.1.js"></script>
+	<script src="./app/uiir.background.js"></script>
+	<script src="./app/uiir.vehicles.js"></script>
+	<script src="./app/uiir.player.js"></script>
+	<script src="./app/uiir.map.js"></script>
+	<script src="./app/uiir.draw.js"></script>
+	<script src="./app/uiir.images.js"></script>
+	<script src="./app/uiir.datafiles.maps.js"></script>
+	<script src="./app/uiir.commandhistory.js"></script>
+	<script src="./app/uiir.engine.js"></script>
+	<!-- script src="./app/uiir.engine.debug.js"></script -->
+</body>
+</html>

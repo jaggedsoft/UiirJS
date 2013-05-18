@@ -1,0 +1,23 @@
+uiir.inventory = uiir.inventory || {}
+
+uiir.inventory.Item = function(iin,iit,iiq) {
+	var q = ko.observable(iiq || 0);
+	var t = iit || 'inv';
+	var n = iin;
+
+	return {
+		q: q,
+		t: t,
+		n: n
+	};
+/*
+	var iidx = ko.observable(0);
+	var invi = [ new uiir.inventory.Item('a', 'inv', 1),
+	 	new uiir.inventory.Item('b', 'inv', 3) ];
+
+	var invo = invi[1];
+	var cinv = ko.computed(function() { 
+		return invi[iidx()];
+	},this);
+*/
+};

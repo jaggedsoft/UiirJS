@@ -1,0 +1,90 @@
+--- done --- bind keyboard keypresses to actions (maybe this is via an invisible text input which takes focuses?)
+--- done --- Inter-map travel by town border exit
+--- done --- button is slow to trigger. kb is fine. done? -- FIGURE OUT WHY THE LAND COMMAND IS NOT IMMEDIATE !!!
+--- done --- death - hp <= 0 - (Probably can/should make the message part of the view template)
+--- done --- fly mode and land/launch restriction now set by vehicles:
++-- done --- LaunchOrLand (verify use of vehicle fly property plane-fly, rocket-orbit (although eventually it goes into space mode))
++-- done --- plane landing now checks against passability and gives "- Not here!!" when not possible.
+--- done --- xit now allowed
++-- done --- Vehicle in/out logic -- reverification of terrain restrictions/freedoms
++-- done --- xit prevented while flying (be careful of spaghetti...)
+--- done --- Terrain filtering player movement
+
+
+### In not so particular order, we must:
+
+refactor where player array index from xy is calculated (centralize this) and add a terrain at location function to centralize that as well.
+
+make a quick space mode which maps to included map xyz space locations and on land, set map and orbit mode (launch message suppressed)
+Ensure that leaving space mode goes to gameplay mode, orbiting in vehicle (presumably, the rocket)
+include death for failed rocket landing (play ult to figure out what kills and what strands)
+provide a way to use current data to allow safe (or maybe killing?) landings for flying vehicles
+
+Retool rocket launch to start space mode
+finish out actual space mode -- not really hard to do
+--+ make a hyperspace animation
+--+ leaving space by orbit puts game mode into rocket flying
+
+Suppress the land plane message when leaving a map in a flying plane
+
+Determine how P will work on virtual keyboard, it does nothing now
+
+Add keyboard mapping masks to prevent stupid things (like player action or ai in zats screen, or xit while flying, etc.)
+
+Character creation and/or default (see ultima 2 for "Gandalf")
+
+Objects strategy (probably just an array for items and an array for mobs, but...)
+
+Inter-map travel by town entry
+
+Verify prevention of entering towns in a vehicle
+
+Inventory use/population/templating
+
+Inventory consumption (eg: food per step), 
+required inventory for vehicle function, 
+hitpoint drain in swamps and (electrical)field, 
+damage prevention/avoidance ala inventory (eg: ring protects against field damage, magic boots against swamp),
+starvation (food gone, still stepping)
+unlock doors lose a key
+
+mobs
+movement ai (wander, seek)
+killable
+inventory gain for death (xp, gold, items, tools)
+combat ai, including thief steal
+
+ensure flying does not permit ai motion
+
+mob transactions
+simple 1 line comment
+auto-donate (eg: Lord Brittish)
+gold offering (eg: father antos, the quickblade guy)
+steal from mobs (uhh... does this actually even work??)
+
+mob transaction across a counter
+simple y/n purchase (eg: food, also covers 'tip' part of pub below)
+multiple option, single level store (eg: weapons)
+two-path transaction (eg: pubs [food, tip])
+steal from counters
+
+spells?  at very least mob spells (sleep(winged demon [balron?]), paralyze legs(demon), paralyze arms(pike demon), magic missle(wizard))
+
+timing (inaction - pass, multiple pass - game speed)
+
+time doors
+timed appearance/disappearance
+inter-map travel by timedoor
+
+save/load games
+
+quests (maybe by way of hidden inventory and "Win" conditions reliant upon it)
+blessing to ring
+minax death to win
+
+dungeon mode - easily the shittiest mode of all, not necessary, and likely not so trivial.  Could actaully go with a 'sword of fargaol' remake easter egg on this on a switch or something?
+
+Config for legacy bugs: switches in and true, but unused -- ensure known ult2 bugs exist (provide a switch for turning them off individually)
+--+ bump swamp in ship == player damage
+--+ invincible guard in each city
+--+ ship duplication

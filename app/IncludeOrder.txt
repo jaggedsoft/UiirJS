@@ -1,0 +1,25 @@
+0) uiir.images		// first to ensure priority in loading -- depends on nothing (except image file data)
+
+
+1-5) // ANY ORDER ON THE FOLLOWING
+
+	uiir.vehicles		// remove 's' -- depends on nothing
+	uiir.background		// factor into two (maybe 3) files/classes -- depends on nothing
+	uiir.draw		// consider a rename -- depends on nothing
+	uiir.map		// flesh this into a class -- depends on nothing
+	uiir.commandhistory	// depends on nothing
+
+// resume ordering 
+
+6) uiir.inventory		// not yet ready -- depends on nothing
+
+
+7) uiir.player		// should/will depend on uiir.inventory
+
+8 - n-1) uiir.datafiles.*	
+	- map		// currently the only one, SHOULD depend on uiir.map
+	- vehicles	// make this, it should replace part of engine
+
+n) uiir.engine		// depends on AotA.
+
+n+1) uiir.debug		// optional.
