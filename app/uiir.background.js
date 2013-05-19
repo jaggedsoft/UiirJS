@@ -44,6 +44,7 @@ uiir.background = function(bg, ms) {
 	var started = 0;
 	var dbg = document.getElementById(bg);
 	var speed = ms || 150;
+	var scrollInterval = null;
 
 	/* functions */
 	function scroll() {
@@ -78,12 +79,19 @@ uiir.background = function(bg, ms) {
 		if(started == 0){
 			started = 1;
 			titleStart();
-			setInterval(scroll, speed);
+			doAlterSpeed(speed);
 		}
+	}
+	
+	var doAlterSpeed = function(sp) {
+		speed = sp;
+		clearInterval(scrollInterval);
+		scrollInterval = setInterval(scroll, speed);
 	}
 
 	/* interface */
 	return {
-		start: doStart
+		start: doStart,
+		alterSpeed: doAlterSpeed
 	};
 };

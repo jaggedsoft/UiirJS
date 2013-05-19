@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>html authoring with surface isn't easy!</title>
+	<title>UiirJS</title>
 	<link rel="stylesheet" href="./s/index.css" type="text/css" />
 </head>
 <body>
@@ -44,40 +44,6 @@
 			<div id='cmd_queue_shell'><div id='cmd_queue'>
 			</div></div>
 		</div>
-
-		<section>
-			<table class="keys" cellpadding="0" cellspacing="0"><tr>
-				<td class='alpharow'>
-					<button data-bind="click: n1">1</button><button data-bind="click: n2">2</button><button data-bind="click: n3">3</button><button data-bind="click: n4">4</button><button data-bind="click: n5">5</button><button data-bind="click: n6">6</button><button data-bind="click: n7">7</button><button data-bind="click: n8">8</button><button data-bind="click: n9">9</button><button data-bind="click: n0">0</button>
-				</td>
-			</tr><tr>
-				<td class='alpharow'>
-					<button data-bind="click: Q">Q</button><button data-bind="click: W">W</button><button data-bind="click: E">E</button><button data-bind="click: R">R</button><button data-bind="click: T">T</button><button data-bind="click: Y">Y</button><button data-bind="click: U">U</button><button data-bind="click: I">I</button><button data-bind="click: O">O</button><button data-bind="click: P">P</button>
-				</td>
-			</tr><tr>
-				<td class='alpharow'><span class='row2'></span><button data-bind="click: A">A</button><button data-bind="click: S">S</button><button data-bind="click: D">D</button><button data-bind="click: F">F</button><button data-bind="click: G">G</button><button data-bind="click: H">H</button><button data-bind="click: J">J</button><button data-bind="click: K">K</button><button data-bind="click: L">L</button>
-				</td>
-			</tr><tr>
-				<td class='alpharow'><span class='row3'></span><button data-bind="click: Z">Z</button><button data-bind="click: X">X</button><button data-bind="click: C">C</button><button data-bind="click: V">V</button><button data-bind="click: B">B</button><button data-bind="click: N">N</button><button data-bind="click: M">M</button>
-				</td>
-			</tr></table>
-
-			<table class="cursor" cellpadding="0" cellspacing="0"><tr>
-				<td></td>
-				<td><button data-bind="click: up">5</button></td>
-				<td></td>
-				<td rowspan='3'></td>
-			</tr><tr>
-				<td><button data-bind="click: left">3</button></td>
-				<td><button class="nv"></button></td>
-				<td><button data-bind="click: right">4</button></td>
-			</tr><tr>
-				<td></td>
-				<td><button data-bind="click: down">6</button></td>
-				<td></td>
-			</tr></table>
-			<div class='clear'></div> 
-		</section>
 	</div>
 	<div data-bind="visible: showZats">
 		<section data-bind="with: player">
@@ -118,35 +84,6 @@
 			</div>
 		</section>
 	</div>
-	<section class="nv">
-			<h3>vehicles</h3>
-			<script>
-			function canPass() {
-				var t = document.getElementById('tinp').value * 1;
-				var o = document.getElementById('passable');
-				var foot = uiir.vehicles.onFoot;
-				var plane = uiir.vehicles.plane;
-				var rocket = uiir.vehicles.rocket;
-				var boat = uiir.vehicles.boat;
-				var horse = uiir.vehicles.horse;
-				var output = '';
-				
-				output += foot.isPassable(t) ? 'f' : '-';
-				output += plane.isPassable(t) ? 'p' : '-';
-				output += rocket.isPassable(t) ? 'r' : '-';
-				output += boat.isPassable(t) ? 'b' : '-';
-				output += horse.isPassable(t) ? 'h' : '-';
-				o.innerText = output;
-			}
-			function mocanPass() {
-				var v = new uiir.vehicles.Vehicle(8,0);
-			}
-			</script>
-			<div>
-				<input id='tinp' type='number'/>
-				<button onclick='canPass();'>P?</button>
-				<span id='passable'></span></div>
-	</section>
 </div>
 	<script src="./lib/jquery-1.9.1.min.js"></script>
 	<script src="./lib/knockout-2.2.1.js"></script>

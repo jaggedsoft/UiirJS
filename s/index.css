@@ -13,13 +13,16 @@ body {
 }
 
 header {
-	height: 3em;
+	height: 2em;
 	position: relative;
 }
 header>p {
+	display: none;
+	height: 2em; 
+	margin: 0; 
+	padding: 0;
 	position: absolute;
 	top: 0;
-	display: none;
 }
 #huiir {
 	letter-spacing: 2px;

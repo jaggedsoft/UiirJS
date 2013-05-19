@@ -32,18 +32,72 @@ uiir.engine = function(a, b, d) {
 				plane: 80,
 				rocket: 80
 			},
-			loading: 450,
-			pass: 80
+			walk: {
+				pass: 80,
+				input: 400,
+				tick: 1000
+			},
+			loading: 600
 		}
 	};
+	
+	var timers = {
+		inactivePassTimer: null,
+		repeatedInputTimer: null
+	};
 
+	var waitHowLong = function() {
+	}
+
+	var setInactivityTimer = function(fromTurnEnd) {
+	}
+	
+	var clearInactivityTimer = function() {
+	}
+	
+	var setBlockingEndOfTurnTimer = function() {
+	}
+	
+	var clearInput = function() {
+		input.blocking = false;
+		input.callback = null;
+		input.gotKey = false;
+		input.lastKey = 32;
+		input.receiving = false;
+		input.value = '';
+	}
+	
 	var input = {
 		blocking: false,
 		callback: null,
+		gotKey: false,
+		lastKey: 32,
 		receiving: false,
 		value: ''
 	};	
+	
 
+	var inactiveTurnProc = function() {
+		clearInput();
+		normalGameLoopProcOne();
+	}
+	
+	var normalGameLoopProcOne = function() {
+		// determine and execute callback
+		// if receiving is not true, proc two after blocking timer
+	}
+	
+	var normalGameLoopProcTwo = function() {
+		// proc effects
+		// proc ai
+		// draw
+		// restart tick and forced pass by inactivity
+	}
+	
+	
+	
+	
+	
 	// Command History
 	var hist = new uiir.CommandHistory(config.history.target, 
 					   config.history.item, 
@@ -491,18 +545,6 @@ uiir.engine = function(a, b, d) {
 		return true;
 	}
 	
-	
-	// event catch keyboard
-	// keys that can be repeated on hold down (queue them ourselves)
-		// P, space - Pass
-		// movement/arrows
-	var kbState = {
-		down: 0,
-		up: 0,
-		which: 0,
-		flipBit: ko.observable(0)
-	};
-	
 	var allowDispatch = true;
 	var iDoKbUpDown = function(key, up) {
 		if(up === true) {
@@ -675,47 +717,6 @@ uiir.engine = function(a, b, d) {
 
 	// public interface into uiir.engine
 	return {
-		n1: noOp,
-		n2: noOp,
-		n3: noOp,
-		n4: noOp,
-		n5: noOp,
-		n6: noOp,
-		n7: noOp,
-		n8: noOp,
-		n9: noOp,
-		n0: k0,
-		A: noOp,
-		B: noOp,
-		C: noOp,
-		D: noOp,
-		E: noOp,
-		F: noOp,
-		G: noOp,
-		H: kH,
-		I: noOp,
-		J: kJ,
-		K: noOp,
-		L: kL,
-		M: noOp,
-		N: noOp,
-		O: noOp,
-		P: noOp,
-		Q: noOp,
-		R: noOp,
-		S: noOp,
-		T: noOp,
-		U: noOp,
-		V: noOp,
-		W: noOp,
-		X: noOp,
-		Y: noOp,
-		Z: kZ,
-		
-		up: iDoUp,
-		down: iDoDown, 
-		left: iDoLeft, 
-		right: iDoRight,
 
 		keyUpDown: iDoKbUpDown,
 		debug: hist.insert,
