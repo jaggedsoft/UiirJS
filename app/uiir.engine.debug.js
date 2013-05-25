@@ -5,7 +5,17 @@ var addDebug = function() {
 	
 		uiir.engine.debug = uiir.engine.debug || {};
 
-		uiir.engine.debug.showMoveCoords = true;
-		uiir.engine.debug.echoResultingVehicle = true;
+		uiir.engine.debug.echoResultingVehicle = false;
+		uiir.engine.debug.showMoveCoords = false;
+		uiir.engine.debug.write = { 
+			show: {
+				inputAcceptingAction: false,
+				waitHowLong: true
+			},
+			waitHowLong: {
+				tickDelayInitial: false,
+				tickDelayFinal: false
+			}
+		}
 	}
 }();

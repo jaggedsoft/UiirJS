@@ -44,10 +44,11 @@
 			<div id='cmd_queue_shell'><div id='cmd_queue'>
 			</div></div>
 		</div>
+
 	</div>
 	<div data-bind="visible: showZats">
 		<section data-bind="with: player">
-			<div class="gap"><button class="right" data-bind="click: $parent.Z">Resume</button><span data-bind="text: name" id="sName"></span>: level <span data-bind="text: level" id="sLevel">#</span> 
+			<div class="gap"><button class="right" data-bind="click: $parent.keyUpDown(90,false)">Resume</button><span data-bind="text: name" id="sName"></span>: level <span data-bind="text: level" id="sLevel">#</span> 
 					<span class='nobr'><span data-bind="text: description.gender" id="sGender"></span> <span data-bind="text: description.race" id="sRace"></span> <span data-bind="text: description.type" id="sType"></span></span></div>
 			
 			<div class="gap left half">
@@ -84,6 +85,7 @@
 			</div>
 		</section>
 	</div>
+
 </div>
 	<script src="./lib/jquery-1.9.1.min.js"></script>
 	<script src="./lib/knockout-2.2.1.js"></script>
@@ -96,6 +98,6 @@
 	<script src="./app/uiir.datafiles.maps.js"></script>
 	<script src="./app/uiir.commandhistory.js"></script>
 	<script src="./app/uiir.engine.js"></script>
-	<!-- script src="./app/uiir.engine.debug.js"></script -->
+	<script src="./app/uiir.engine.debug.js"></script>
 </body>
 </html>

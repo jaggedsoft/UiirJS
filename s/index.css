@@ -18,9 +18,9 @@ header {
 }
 header>p {
 	display: none;
-	height: 2em; 
-	margin: 0; 
-	padding: 0;
+	height: 2em;
+	margin-top: 0;
+	padding-top: 0;
 	position: absolute;
 	top: 0;
 }
@@ -86,7 +86,7 @@ canvas, .canvas_blacking {
 #cmd_queue_shell { 
 	border: solid 1px #3f3f3f;
 	direction: rtl;
-	height: 5.5em;
+	height: 4.5em;
 	overflow: auto;
 	margin-right: 102px; 
 }

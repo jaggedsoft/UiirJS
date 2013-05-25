@@ -6,7 +6,14 @@ var uiir = uiir || {};
 uiir.engine = function(a, b, d) {
 
 	// Debugging assistance
-	var debug = { };
+	var debug = { 
+		out: function(message, show) {
+			if((!(typeof(show) === 'undefined')) && show == true) {
+				hist.insert(message);
+			}
+			return false;
+		}
+	};
 	
 	// Config
 	var config = {
@@ -33,78 +40,252 @@ uiir.engine = function(a, b, d) {
 				rocket: 80
 			},
 			walk: {
-				pass: 80,
+				tick: 1800,
 				input: 400,
-				tick: 1000
+				pass: 80
 			},
 			loading: 600
 		}
 	};
-	
+
 	var timers = {
-		inactivePassTimer: null,
-		repeatedInputTimer: null
+		lastGameTick_ms: 0,
+		lastTickStop_ms: 0,
+		nowTick_ms: 0,
+		gameTick: 0
 	};
 
-	var waitHowLong = function() {
+	var clearTimers = {
+		gameTick: function() {
+			debug.out('clearing gameTick');
+			clearTimeout(timers.gameTick);
+			timers.gameTick = null;
+		}
 	}
 
-	var setInactivityTimer = function(fromTurnEnd) {
+	var mode = {
+		game: true,
+		load: false,
+		zats: false,	
+		sub: {
+			create: false,
+			// dead: myPlayer.isdead(), // calculated by player health eval
+			dungeon: false,
+			// flying: isFlyingSomething(),
+			normal: true,
+			repeater: false,
+			space: false,
+			title: false			
+		}
+	};
+
+	var input = {
+		acceptAction: false,
+		acceptDetail: false,
+		callback: null,
+		detailType: null,
+		detailTypes: {
+			singleKey: 11
+		},
+		gotKey: false,
+		lastKey: null,
+		value: null
+	};
+
+	var setAllowInputCallback = function(inputType, callback) {
+		clearInput();
+		input.acceptDetail = true;
+		input.detailType = inputType;
+		input.callback = callback;
 	}
-	
-	var clearInactivityTimer = function() {
-	}
-	
-	var setBlockingEndOfTurnTimer = function() {
-	}
-	
+
 	var clearInput = function() {
-		input.blocking = false;
+		input.acceptAction = false;
+		input.acceptDetail = false;
+		input.detailType = null;
 		input.callback = null;
 		input.gotKey = false;
-		input.lastKey = 32;
-		input.receiving = false;
-		input.value = '';
+		input.lastKey = null;
+		input.value = null;
+		return true;
 	}
-	
-	var input = {
-		blocking: false,
-		callback: null,
-		gotKey: false,
-		lastKey: 32,
-		receiving: false,
-		value: ''
-	};	
-	
 
-	var inactiveTurnProc = function() {
+	// input dispatch
+	var iHandleInputReceived = function(key, up) { 
+		if(up === true) { // key release
+			return false; // for now
+		}
+		else {
+			if(!(input.acceptAction || input.acceptDetail)) {
+				return false; // blocking all input
+			}
+			else {
+				input.lastKey = key;
+				if(input.acceptAction) {
+					// receiving an action input
+					input.acceptAction = false; // block to stop extra input
+					stopForceActionGameNormal();
+					debug.out('accepted input');
+					input.gotKey = true;
+					setCallbackByMode();
+					// if ignoring invalid input, and invalid, restart tick (not standard -- add later)
+					// otherwise...
+					return iLoopGameNormalAction();
+				}
+				else {
+					// input.acceptDetail -- receiving solicited input
+					if((input.detailType % 2) == 1) { // single input
+						input.value = key; // not actually how this should be done
+						return iLoopGameNormalAction();
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	var iHandleInactionGameNormal = function() {
+		// "if you choose not to decide, you still have made a choice."
+		input.acceptAction = false; // block to stop extra input
+		clearTimers.gameTick();
+		debug.out('received no input');
+					input.gotKey = true;
+					input.lastKey = 32;
+		input.callback = passConsume;
+		return iLoopGameNormalAction();
+	}
+
+	// Repeated input function control
+	// Note: this is not auto movement,
+	// it is timed acceptance of input
+	// between certain keydown/keyup
+
+	// passing time
+	var iDoPassKeyPress = function() { 
+	}
+
+	var iDoPassKeyRelease = function() { 
+	}
+
+	// movement
+	var iDoMoveKeyPress = function() { 
+	}
+
+	var iDoMoveKeyRelease = function() { 
+	}
+
+	// Game Loop, Game>Normal
+		// 1 Determine and Execute Action (player input or inaction)
+	var iLoopGameNormalAction = function() { 
+		// execute callback
+		if(typeof(input.callback) === 'function') {
+			debug.out('firing tick callback (input: ' + input.gotKey + ')');
+			input.callback();
+		}
+		else {
+			// check if we are ignoring bad input.
+			// if so, reset the inactivity timer.
+			// otherwise execute an invalid action handler (notify error, pass with consume)
+			hist.append('invalid action');
+		}
+
+
+		if(!input.acceptDetail) {
+			debug.out('setting timeout tick part 2');
+			setTimeout(function() {
+				debug.out('firing tick part 2');
+				iLoopGameNormalDrawAndRepeat();
+			}, waitHowLongGameNormal(true));
+		}
+		return true;
+	}
+
+		// 2 Draw and Set Timer
+	var iLoopGameNormalDrawAndRepeat = function() { 
+		// doEffects
+		consumeFood();
+		// doAI
+		doDraw();
+		if(myPlayer.hits() > 0) {
+			startForceActionGameNormal(true); // restart the gameTick
+		}
+	}
+
+	// Game>Normal Inaction caused looping
+	var startForceActionGameNormal = function(fromInitial) {
 		clearInput();
-		normalGameLoopProcOne();
+		timers.lastGameTick_ms = (new Date()).getTime();
+		debug.out('accepting input', debug.write.show.inputAcceptingAction);
+		input.acceptAction = true;
+		timers.gameTick = setTimeout(iHandleInactionGameNormal, waitHowLongGameNormal());
+		hist.insert('CMD:');
+		debug.out('gameTick timer set');
+		timers.lastTickStop_ms = 0;
 	}
-	
-	var normalGameLoopProcOne = function() {
-		// determine and execute callback
-		// if receiving is not true, proc two after blocking timer
+
+	var stopForceActionGameNormal = function() {
+		timers.lastTickStop_ms = (new Date()).getTime();
+		clearTimers.gameTick();
 	}
-	
-	var normalGameLoopProcTwo = function() {
-		// proc effects
-		// proc ai
-		// draw
-		// restart tick and forced pass by inactivity
+
+	// Determine timing on tick start/restart
+	var waitHowLongGameNormal = function(showDebugAnyway) {
+		var gk = input.gotKey;
+		var tickDelay = gk ? 
+			((input.lastKey == 32 || input.lastKey == 80) ? 
+				config.timing.walk.pass : 
+				config.timing.walk.input) : 
+			config.timing.walk.tick;
+		debug.out('tickDelay: ' + tickDelay, (showDebugAnyway || debug.write.show.waitHowLong) && debug.write.waitHowLong.tickDelayInitial)
+		if(gk && (timers.lastTickStop_ms > timers.lastGameTick_ms)) {
+			// restarting an interrupted timer
+			tickDelay -= (timers.lastTickStop_ms - timers.lastGameTick_ms);
+		}
+		else {
+			if(gk) { // todo: is this part right?
+				tickDelay -= ((new Date()).getTime() - timers.lastGameTick_ms);
+			}
+		}
+		if(tickDelay < 1) {
+			tickDelay = 1;
+		}
+		debug.out('tickDelay: ' + tickDelay, (showDebugAnyway || debug.write.show.waitHowLong) && debug.write.waitHowLong.tickDelayFinal)
+		return tickDelay;
 	}
-	
-	
-	
-	
-	
+
+
+
+	// super temporary. going to replace with mode input mapping.
+	// i realize it's bullshit -- again, temporary.
+	var setCallbackByMode = function() {
+		// get the current mask based upon lastKey
+		// valid or !ignore invalid == process second state
+		switch(input.lastKey) {
+			case 219: input.callback = iDoUp; break;
+			case 38: input.callback = iDoUp; break;
+			case 186: input.callback = iDoLeft; break;
+			case 37: input.callback = iDoLeft; break;
+			case 222: input.callback = iDoRight; break;
+			case 39: input.callback = iDoRight; break;
+			case 191: input.callback = iDoDown; break;
+			case 40: input.callback = iDoDown; break;
+			case 80: input.callback = passConsume; break;
+			case 32: input.callback = passConsume; break;
+			case 76: input.callback = kL; break;
+			case 88: input.callback = kX; break;
+			case 90: input.callback = kZ; break;
+			case 48: input.callback = k0; break;
+			default: input.callback = null; break;
+		};
+	}
+
 	// Command History
 	var hist = new uiir.CommandHistory(config.history.target, 
 					   config.history.item, 
 					   config.history.size, 
 					   config.history.shell);
 
-	// Player
+		// Player
 	var myPlayer = new uiir.Player('Josser');
 	
 	// we don't need these to be observable
@@ -218,81 +399,32 @@ uiir.engine = function(a, b, d) {
 		return mode() == "loading";
 	}, this);
 
-// Player function logic, by alphabet
 
-	// H
-	var doHyper = function() {
-		
-		if(!(isSpaceSubMode() || isFlyingSomething())) {
-			landOrLaunchRocket();
-			subMode("space");
+// effects and outcomes
+	var consumeFood = function() {
+		if(input.lastKey == 80 && config.retainLegacyBugs.passPConsumesNothing) {
+			return false; // P key negates food consumption
+		}
+		var tempFood = myPlayer.food() - 1;
+		if(tempFood < 0) {
+			var tempHits = myPlayer.hits() - 1;
+			if(tempHits >= 0) {
+				myPlayer.hits(tempHits);
+			}
 		}
 		else {
-			hist.insert('Hyper');
-			// there must be a better way...
-			spacePosition.writing = 'x';
-			hist.append(spacePosition.writing + ':');
+			myPlayer.food(tempFood);
 		}
 	}
 
-	var procKey = function(key) {
-		if(isSpaceSubMode() && spacePosition.writing != '') {
-			hist.append(key);
-			hist.insert(spacePosition.writing + ':');
-			switch(spacePosition.writing)
-			{
-				case 'x': {
-					spacePosition.x = key;
-					spacePosition.writing = 'y';
-				} break;
-				case 'y': {
-					spacePosition.y = key;
-					spacePosition.writing = 'z';
-				} break;
-				case 'z': {
-					spacePosition.z = key;
-					spacePosition.writing = '';
-										
-				} break;
-				default: {
-					spacePosition.writing = '';
-					return false;
-				} break;
-			}; // end switch
-			if(spacePosition.writing == '') {
-			var i = maps.length;
-			var orb = '';
-			while(i--) {
-			if(maps[i].name == mapName) {
-				currentMapIndex(i);
-				if(typeof(pX) === 'undefined') {
-					// get map start x y
-					var ms = currentMap().start;
-					playerPosition.x(ms.x);
-					playerPosition.y(ms.y);
-				}
-				else {
-					playerPosition.x(pX);
-					playerPosition.y(pY);
-				}
-				mapSize.x = currentMap().size.x;
-				mapSize.y = currentMap().size.y;
-				mapWrap = currentMap().type === "world";
-				return true;
-			}
-			}
-			}
-			return true;
-		}
-		return false;
-	}
+// Player function logic, by alphabet
 
 	// L
 	// TODO: Quit being a toolbox and stop using acronyms
-	// TODO: Devise a better plan for mode. Also, use a switch, buddy.
+	// TODO: Devise a better plan for mode.
 	var LoL = function() {
 		var retval;
-		hist.insert(isFlyingSomething() ? 'Land' : 'Launch');
+		hist.append(isFlyingSomething() ? 'Land' : 'Launch');
 		var veh = myVehicles[myVehicles.length - 1];
 		// myPlayer.vehicle // in a computed?
 		switch(uiir.vehicles.flyModes[veh.flyMode]) {
@@ -314,6 +446,8 @@ uiir.engine = function(a, b, d) {
 
 	var landOrLaunchPlane = function() {
 		if(!isFlyingSomething()) {
+			clearTimeout(procTimer);
+			input.bypassWalkTimer = true;
 			autoMovement(0, -1, config.timing.fly.plane);
 		}
 		else {
@@ -322,6 +456,8 @@ uiir.engine = function(a, b, d) {
 			if(isFlying.plane && myVehicles[myVehicles.length - 1].isPassable(currentMap().data[drawIndex(nx,ny,9,5,currentMap().size.x, currentMap().size.y,mapWrap)]))
 			{
 				clearAutoMovementTimer();
+				input.bypassWalkTimer = false;
+				procTimer = setTimeout(procTickOne);
 			}
 			else {
 				hist.append('- Not here!!!');
@@ -334,8 +470,8 @@ uiir.engine = function(a, b, d) {
 
 	var landOrLaunchRocket = function() {
 		if(!isFlyingSomething()) {
-// move to initiate orbit
-//			autoMovement(0, -1, config.timing.fly.rocket);
+			// move to initiate orbit
+			// autoMovement(0, -1, config.timing.fly.rocket);
 		}
 		else if(isFlying.rocket)
 		{ // land -- need death for some terrain here
@@ -349,36 +485,24 @@ uiir.engine = function(a, b, d) {
 	}
 	
 	// P - PASS (going to be a little tricky because the button is bullsh*t)
-	var passTime = function() { // until game timing is in, this'll just be a history item addition.
-		return hist.insert('Pass');
-	}
-	var passTimer = null;
-	var startPassTimer = function() { 
-		if(passTimer === null) {
-			passTimer = setInterval(passTime, config.timing.pass);
-		}
+	var passTime = function() {
+		hist.append('Pass');
 		return true;
 	}
-	var killPassTimer = function() { 
-		if(passTimer !== null) {
-			clearInterval(passTimer);
-			passTimer = null;
-		}
-		return true;
-	} 
+	var passConsume = function() { // no need for extra alias
+		return passTime();
+	}
 
 	// X - (e)Xit
 	var doXit = function() {
 		if(!isFlyingSomething()) {
-			hist.insert('Exit');
+			hist.append('Exit');
 			var len = myVehicles.length - 1;
 			if(len > 0) {
 				hist.append(myVehicles[len].name);
 				myVehicles.pop();
-				if(debug.echoResultingVehicle) {
-					hist.insert('Now ' + myVehicles[myVehicles.length - 1].name);
-				}
-				return doDraw();
+					debug.out('Now ' + myVehicles[myVehicles.length - 1].name, debug.echoResultingVehicle);
+				//return doDraw();
 			}
 			else {
 				// Which one? Make literals constants.
@@ -391,11 +515,13 @@ uiir.engine = function(a, b, d) {
 	
 	// Z - STATUS SCREEN TOGGLE - "Zats" because obviously Gariott wrote Steal before Status?
 	var doZats = function() {
+		setAllowInputCallback(input.detailTypes.singleKey, unZats);
 		mode("zats");
 		return true;
 	}
 
 	var unZats = function() {
+		clearInput();
 		mode("play"); // this'll need to change if allowing zats in other modes
 		return true;
 	}
@@ -444,7 +570,6 @@ uiir.engine = function(a, b, d) {
 			else {
 				hist.append('blocked');
 			}
-			doDraw();
 		}
 		if(debug.showMoveCoords) {
 			hist.append(''+playerPosition.x()+','+playerPosition.y());
@@ -485,7 +610,8 @@ uiir.engine = function(a, b, d) {
 		lastAutoMove.x = x;
 		lastAutoMove.y = y;
 		autoMovementTimer = setInterval(function() { 
-			return movePlayer(x,y);
+			movePlayer(x,y);
+			return doDraw();
 		}, dt);
 		return true;
 	}
@@ -545,126 +671,9 @@ uiir.engine = function(a, b, d) {
 		return true;
 	}
 	
-	var allowDispatch = true;
-	var iDoKbUpDown = function(key, up) {
-		if(up === true) {
-			kbState.up = key;
-			allowDispatch = true;
-		}
-		else {
-			kbState.down = key;
-		}
-		kbState.which = up ? 1 : 0;
-		if(allowDispatch) {
-			allowDispatch = false;
-			kbState.flipBit((kbState.flipBit() + 1) % 3);
-		}
-		return true;
-	}
-
-	var iDoKbDispatch = ko.computed(function() {
-		var fb = kbState.flipBit(); // does nothing but allow for computed
-		if(kbState.which === 1) { // up
-			if(kbState.up === 80 || kbState.up === 32) {
-				// stop passing time
-				killPassTimer(); // startPassTimer
-			}
-			allowDispatch = true;
-		}
-		else { // down
-			switch(kbState.down) {
-				case 219: iDoUp(); break;
-				case 38: iDoUp(); break;
-				case 186: iDoLeft(); break;
-				case 37: iDoLeft(); break;
-				case 222: iDoRight(); break;
-				case 39: iDoRight(); break;
-				case 191: iDoDown(); break;
-				case 40: iDoDown(); break;
-				case 80: startPassTimer(); break;
-				case 32: startPassTimer(); break;
-				case 65: kA(); break;
-				case 66: kB(); break;
-				case 67: kC(); break;
-				case 68: kD(); break;
-				case 69: kE(); break;
-				case 70: kF(); break;
-				case 71: kG(); break;
-				case 72: kH(); break;
-				case 73: kI(); break;
-				case 74: kJ(); break;
-				case 75: kK(); break;
-				case 76: kL(); break;
-				case 77: kM(); break;
-				case 78: kN(); break;
-				case 79: kO(); break;
-				case 81: kQ(); break;
-				case 82: kR(); break;
-				case 83: kS(); break;
-				case 84: kT(); break;
-				case 85: kU(); break;
-				case 86: kV(); break;
-				case 87: kW(); break;
-				case 88: kX(); break;
-				case 89: kY(); break;
-				case 90: kZ(); break;
-				case 49: k1(); break;
-				case 50: k2(); break;
-				case 51: k3(); break;
-				case 52: k4(); break;
-				case 53: k5(); break;
-				case 54: k6(); break;
-				case 55: k7(); break;
-				case 56: k8(); break;
-				case 57: k9(); break;
-				case 48: k0(); break;
-				default: break;
-			}
-		}
-		kbState.up = 0;
-		kbState.down = 0;
-		kbState.which = 1;
-		return true;
-	}, this);
-
-	// player action interface functions
-	var noOp = function(){}
-
-	var k1 = function() { return true; }
-	var k2 = function() { return true; }
-	var k3 = function() { return true; }
-	var k4 = function() { return true; }
-	var k5 = function() { return true; }
-	var k6 = function() { return true; }
-	var k7 = function() { return true; }
-	var k8 = function() { return true; }
-	var k9 = function() { return true; }
 	var k0 = function() { return hist.toggleScrollBar(); }
-	var kA = function() { return true; }
-	var kB = function() { return true; }
-	var kC = function() { return true; }
-	var kD = function() { return true; }
-	var kE = function() { return true; }
-	var kF = function() { return true; }
-	var kG = function() { return true; }
-	var kH = function() { return doHyper(); }
-	var kI = function() { return true; }
-	var kJ = function() { hist.insert('Jump - Wee!'); return true; }
-	var kK = function() { return true; }
 	var kL = function() { return LoL(); }
-	var kM = function() { return true; }
-	var kN = function() { return true; }
-	var kO = function() { return true; }
-	var kP = function() { return true; }
-	var kQ = function() { return true; }
-	var kR = function() { return true; }
-	var kS = function() { return true; }
-	var kT = function() { return true; }
-	var kU = function() { return true; }
-	var kV = function() { return true; }
-	var kW = function() { return true; }
 	var kX = function() { return doXit(); }
-	var kY = function() { return true; }
 	var kZ = function() {
 		if(!isZatsMode()) {
 			return doZats();
@@ -674,19 +683,19 @@ uiir.engine = function(a, b, d) {
 
 	// player movement interface functions
 	var iDoUp = function() { 
-		hist.insert('North');
+		hist.append('North');
 		turn(0,-1); 
 	}
 	var iDoDown = function() { 
-		hist.insert('South');
+		hist.append('South');
 		turn(0,1); 
 	}
 	var iDoLeft = function() { 
-		hist.insert('West');
+		hist.append('West');
 		turn(-1,0); 
 	}
 	var iDoRight = function() { 
-		hist.insert('East');
+		hist.append('East');
 		turn(1,0); 
 	}
 
@@ -704,31 +713,31 @@ uiir.engine = function(a, b, d) {
 		// draw it
 		doDraw();
 		$(document).ready(function() {
-		var $body = $('body');
-		$body.keydown(function(event) { 
-			return uiir.engine.keyUpDown(event.which, false);
-		});
-		$body.on('keyup', function(event) { 
-			return uiir.engine.keyUpDown(event.which, true);
-		});
-		$body.focus();
+			var $body = $('body');
+			$body.keydown(function(event) { 
+				return uiir.engine.keyUpDown(event.which, false);
+			});
+			$body.on('keyup', function(event) { 
+				return uiir.engine.keyUpDown(event.which, true);
+			});
+			$body.focus();
+			startForceActionGameNormal();
 		});
 	}(); // IIFE
 
 	// public interface into uiir.engine
 	return {
-
-		keyUpDown: iDoKbUpDown,
-		debug: hist.insert,
-		
-		player: myPlayer,
-		
-		showSpace: isSpaceSubMode,
 		showGame: isPlayMode,
 		showLoading: isLoadingMode,
 		showZats: isZatsMode,
+		showSpace: isSpaceSubMode,
+		
+		player: myPlayer, // gateway to screen access of player stats
 
-		debug: debug // extensibility point
+		keyUpDown: iHandleInputReceived, // iDoKbUpDown, // control (hardware or virtual keyboard and fake kb (button rows))
+		
+		debugWrite: hist.insert, // if we really must write from page code... :(
+		debug: debug // extensibility point	
 	};
 }('canvas_one','canvas_two');
 
