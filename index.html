@@ -1,103 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>UiirJS</title>
-	<link rel="stylesheet" href="./s/index.css" type="text/css" />
-</head>
+<head></head>
 <body>
-<div id="shellWidth">
-	<header>
-		<p id="huiir">Uiir</p>
-		<p id="hult">Ultima ][ - Revenge of the Enchantress</p>
-	</header>
-	<div data-bind="visible: showLoading">
-		<section style="padding-top: 6em; text-align: center;">
-			<span>Loading...</span>
-		</section>
-	</div>
-	<div data-bind="visible: showGame">
-
-		<div data-bind="visible: showSpace">
-			<section>Canvases here</section>
-			<section>x y z</section>
-			<p>Maybe this is the wrong way to do this?</p>
-			<p>H to hyper</p>
-		</div>
-
-		<section class='canvas_frame'>
-			<div id="backer" class="cv canvas_backing">
-			<canvas height="160" width="320" class="cv" id="canvas_one"><span>No canvas for you.</span></canvas>
-			<canvas height="160" width="320" class="cv" id="canvas_two"><span>No canvas for you.</span></canvas>
-			</div>
-			<div id="blacker" class="cv canvas_blacking"></div>
-			<div id="youAreDead" data-bind="visible: player.isDead"><strong class="nobr"><span data-bind='text: player.name'>[player_name]</span> is dead.</strong></div>
-		</section>
-		
-
-		<div>
-			<section data-bind="with: player" class="basics right">
-				<div><label>HITS:</label><span data-bind="text: hits" id="sHits"></span></div>
-				<div><label>GOLD:</label><span data-bind="text: gold" id="sGold"></span></div>
-				<div><label>FOOD:</label><span data-bind="text: food" id="sFood"></span></div>
-				<div><label>EXPR:</label><span data-bind="text: expr" id="sExpr"></span></div>
-			</section>
-			<div id='cmd_queue_shell'><div id='cmd_queue'>
-			</div></div>
-		</div>
-
-	</div>
-	<div data-bind="visible: showZats">
-		<section data-bind="with: player">
-			<div class="gap"><button class="right" data-bind="click: $parent.keyUpDown(90,false)">Resume</button><span data-bind="text: name" id="sName"></span>: level <span data-bind="text: level" id="sLevel">#</span> 
-					<span class='nobr'><span data-bind="text: description.gender" id="sGender"></span> <span data-bind="text: description.race" id="sRace"></span> <span data-bind="text: description.type" id="sType"></span></span></div>
-			
-			<div class="gap left half">
-				<div><label>AGI:</label><span data-bind="text: stats.agility" id="sAgility"></span></div>
-				<div><label>STR:</label><span data-bind="text: stats.strength" id="sStrength"></span></div>
-				<div><label>STA:</label><span data-bind="text: stats.stamina" id="sStamina"></span></div>
-				<div><label>INT:</label><span data-bind="text: stats.intelligence" id="sIntelligence"></span></div>
-				<div><label>WIS:</label><span data-bind="text: stats.wisdom" id="sWisdom"></span></div>
-				<div><label>CHA:</label><span data-bind="text: stats.charisma" id="sCharisma"></span></div>
-			</div>
-			<div class="gap right aright half">
-				<div class="tools"><label>KEYS:</label><span data-bind="text: tools.keys" id="sTool1"></span></div>
-				<div class="tools"><label>TOOLS:</label><span data-bind="text: tools.tools" id="sTool2"></span></div>
-				<div class="tools"><label>TORCHES:</label><span data-bind="text: tools.torches" id="sTool3"></span></div>
-			</div>
-			<div class="gap clear">
-				<div><label>EQUIPPED</label></div>
-				<div><label>WEAPON:</label><span id="sEquippedWeapon"></span></div>
-				<div><label>ARMOR:</label><span id="sEquippedArmor"></span></div>
-				<div><label>SPELL:</label><span id="sEquippedSpell"></span></div>
-			</div>
-			<div class="gap">
-				<label>WEAPONS:</label>
-				<span data-bind="text: weaponsList" id="sWeapons"></span>
-			</div>
-			<div class="gap">
-				<label>ARMOR:</label><span data-bind="text: armorList" id="sArmor"></span>
-			</div>
-			<div class="gap">
-				<label>SPELLS:</label><span data-bind="text: spellsList" id="sSpells"></span>
-			</div>
-			<div>
-				<label>INVENTORY:</label><span data-bind="text: inventoryList" id="sInventory"></span>
-			</div>
-		</section>
-	</div>
-
-</div>
-	<script src="./lib/jquery-1.9.1.min.js"></script>
-	<script src="./lib/knockout-2.2.1.js"></script>
-	<script src="./app/uiir.background.js"></script>
-	<script src="./app/uiir.vehicles.js"></script>
-	<script src="./app/uiir.player.js"></script>
-	<script src="./app/uiir.map.js"></script>
-	<script src="./app/uiir.draw.js"></script>
-	<script src="./app/uiir.images.js"></script>
-	<script src="./app/uiir.datafiles.maps.js"></script>
-	<script src="./app/uiir.commandhistory.js"></script>
-	<script src="./app/uiir.engine.js"></script>
-	<script src="./app/uiir.engine.debug.js"></script>
+<h3>Uiir Menu</h3>
+<ul>
+  <li><a href="uiirmain.html">The game</a></li>
+</ul>
 </body>
 </html>

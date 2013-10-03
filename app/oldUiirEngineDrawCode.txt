@@ -1,0 +1,52 @@
+	// Draw View
+	var dc = new uiir.Draw(a, b);
+	var drawIndex = function(px,py,x,y,mapX,mapY,iswrap) {
+		px += (x - 9);
+		py += (y - 5);
+		if(iswrap) {
+			if(0 > px || mapX) { 
+				px += mapX;
+				px %= mapX;
+			}
+			if(0 > py || mapY) {
+				py += mapY;
+				py %= mapY
+			}
+		}
+		else {
+			if(0 > px || mapX <= px || 0 > py || mapY <= py) {
+				return -2;
+			}
+		}
+		return px+(py*mapX);
+	};
+	var doDraw = function() {
+	 	dc.clear();
+		var d = dc.draw();
+		var w = mapWrap;
+		var px = playerPosition.x();
+		var py = playerPosition.y();
+		var vx = 0; //viewIndices;
+		var vy = 0; //
+		var m = currentMap();
+		var sx = m.size.x;
+		var sy = m.size.y;
+		for(vx = 0; vx < 20; ++vx) {
+			for(vy = 0; vy < 10; ++vy) {
+				var a = drawIndex(px,py,vx,vy,sx,sy,w);
+				var t = (a < 0) ? m.oobTile : m.data[a];
+				if(t > 7) { }
+				else {
+					d.drawImage(tl[t], (16*vx), (16*vy));					
+				}
+			}
+		}
+		var playTile = ptl[0];
+		var vindex = myVehicles[myVehicles.length -1].vehicleTileIndex;
+		if(vindex >= 0) {
+			playTile = vtl[vindex];
+		}
+		d.drawImage(playTile, 144, 80); // correct index with player tile
+		dc.swap();
+		return true;
+	}

@@ -1,0 +1,24 @@
+
+[_] 001) screwy flying
+	launch and land works but flying is kind of screwy.
+	input acceptance handler shouldn't just be assumed 
+	to be the normal game tick, it should fork on mode.
+	food ahouldn't be consumed while flying, nor should 
+	effects or ai proc. all 3 things happen on accepted
+	input while flying since it all goes through normal 
+	channels. fix by adding additional overall input 
+	handler for flying mode.
+
+[_] 002) invalid action while flying
+	all input should ignore if not l or movement while
+	flying. should be resolved woth 001. between that
+	and the more robust input handling stuff.
+
+
+
+
+
+
+
+
+

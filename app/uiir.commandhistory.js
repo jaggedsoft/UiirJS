@@ -18,7 +18,7 @@ uiir.CommandHistory = function(commandHistoryTargetSelector, historyItemType, co
 	var historySize = commandHistorySize;
 	
 	var collectionSelector = mainSelector + ' > ' + itemType;
-	var firstChildSelector = collectionSelector + ':first';
+	var firstChildSelector = collectionSelector + ':last';
 
 	var itemOpen = '<' + itemType + '>';
 	var itemClose = '</' + itemType + '>';
@@ -31,26 +31,40 @@ uiir.CommandHistory = function(commandHistoryTargetSelector, historyItemType, co
 		}
 	}
 
+	var isWritingEnabled = true;
 
 	// ### functions ###
 
-	var doAppendItem = function(msg) {
-		if($(collectionSelector).size() <= 0) {
-			doInsertItem('');
+	var append = function(msg) {
+		if(isWritingEnabled) {
+			if($(collectionSelector).size() <= 0) {
+				insert('');
+			}
+			$(firstChildSelector).append(msg);
 		}
-		$(firstChildSelector).append(' '+msg);
-		return true;
+		return isWritingEnabled;
 	}
 	
-	var doInsertItem = function(msg) {
-		if($(collectionSelector).size() > historySize) {
-			$(mainSelector ).html('');
+	var insert = function(msg) {
+		if(isWritingEnabled) {
+			if($(collectionSelector).size() > historySize) {
+				clear();
+			}
+			$(mainSelector).append(itemOpen + msg + itemClose);
 		}
-		$(mainSelector).prepend(itemOpen + msg + itemClose);
-		return true;
+		return isWritingEnabled;
 	}
 
-	var doToggleScrollBar = function() {
+	var clear = function() {
+		$(mainSelector ).html('');
+	};
+
+
+	var enable = function(shouldEnable) {
+		isWritingEnabled = shouldEnable;
+	};
+
+	var toggleScrollBar = function() {
 		if($shellSelector != null) {
 			var dir = $shellSelector.css('direction');
 			dir = dir.split("").reverse().join("");
@@ -60,11 +74,12 @@ uiir.CommandHistory = function(commandHistoryTargetSelector, historyItemType, co
 		return false;
 	}
 
-
 	// ### interface ###
 	return {
-		insert: doInsertItem,
-		append: doAppendItem,
-		toggleScrollBar: doToggleScrollBar
+		insert: insert,
+		append: append,
+		enable: enable,
+		clear: clear,
+		toggleScrollBar: toggleScrollBar
 	};
 }

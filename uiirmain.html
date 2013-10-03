@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>UiirJS</title>
+	<link rel="stylesheet" href="./s/index.css" type="text/css" />
+</head>
+<body>
+<div id="shellWidth">
+	<header>
+		<p id="huiir">Uiir</p>
+		<p id="hult">Ultima ][ - Revenge of the Enchantress</p>
+	</header>
+	<div data-bind="visible: mode() == 'loading'">
+		<section style="padding-top: 6em; text-align: center;">
+			<span>Loading...</span>
+		</section>
+	</div>
+	<div data-bind="visible: mode() == 'game'">
+
+		<section class='canvas_frame'>
+			<div id="backer" class="cv canvas_backing">
+			<canvas height="160" width="320" class="cv" id="canvas_one"><span>No canvas for you.</span></canvas>
+			<canvas height="160" width="320" class="cv" id="canvas_two"><span>No canvas for you.</span></canvas>
+			</div>
+			<div id="blacker" class="cv canvas_blacking"></div>
+			<div id="youAreDead" data-bind="visible: player.isDead"><strong class="nobr"><span data-bind='text: player.name'>[player_name]</span> is dead.</strong></div>
+		</section>
+		<div class='nogap'>
+			<section data-bind="with: player" class="basics right nogap">
+				<div><label>H.P.:</label><span class="numeric" data-bind="text: phits()" id="sHits"></span></div>
+				<div><label>FOOD:</label><span class="numeric" data-bind="text: pfood()" id="sFood"></span></div>
+				<div><label>EXP.:</label><span class="numeric" data-bind="text: pexpr()" id="sExpr"></span></div>
+				<div><label>GOLD:</label><span class="numeric" data-bind="text: pgold()" id="sGold"></span></div>
+			</section>
+			<div id='cmd_queue_shell'><div id='cmd_queue'>
+			</div></div>
+			<div style="clear: both">
+				((<span data-bind="text: ctimeout"></span> - 
+				<span data-bind="text: cinterval"></span>))
+			</div>
+		</div>
+	</div>
+	<div data-bind="visible: mode() == 'zats'">
+		<section data-bind="with: player">
+			<script>
+				function swapstyle() {
+					$('body').toggleClass('uiir');
+					return true;
+				}
+			</script>
+			<button style="float: right" onclick="swapstyle();">^</button>
+			<div class="gap">
+			<span data-bind="text: name" id="sName"></span><br /> 
+			<span class='nobr'>A level <span class="numeric" data-bind="text: level" id="sLevel">#</span> <span data-bind="text: description.gender" id="sGender"></span> <span data-bind="text: description.race" id="sRace"></span> <span data-bind="text: description.type" id="sType"></span></span></div>
+			
+			<div class="gap right aright half">
+				<div class="tools"><label>TORCHES-</label><span class="numeric" data-bind="text: ptorches()" id="sTool3"></span></div>
+				<div class="tools"><label>KEYS-</label><span class="numeric" data-bind="text: pkeys()" id="sTool1"></span></div>
+				<div class="tools"><label>TOOLS-</label><span class="numeric" data-bind="text: ptools()" id="sTool2"></span></div>
+			</div>
+			<div class="gap left half">
+				<div><label>WEAPON:</label><span id="sEquippedWeapon"></span></div>
+				<div><label>ARMOR:</label><span id="sEquippedArmor"></span></div>
+				<div><label>SPELL:</label><span id="sEquippedSpell"></span></div>
+			</div>
+
+			<div class="clear gap acenter">
+				<div class="left aright">
+					<div><label>Strength-</label><span class="numeric" data-bind="text: pstrength()" id="sStrength"></span></div>
+					<div><label>Agility-</label><span class="numeric" data-bind="text: pagility()" id="sAgility"></span></div>
+				</div>
+				<div class="iblock aright">
+					<div class="iblock"><label>Stamina-</label><span class="numeric" data-bind="text: pstamina()" id="sStamina"></span></div><br />
+					<div class="iblock"><label>Charisma-</label><span class="numeric" data-bind="text: pcharisma()" id="sCharisma"></span></div>
+				</div>
+				<div class="right aright">
+					<div><label>Wisdom-</label><span class="numeric" data-bind="text: pwisdom()" id="sWisdom"></span></div>
+					<div><label>Intelligence-</label><span class="numeric" data-bind="text: pintelligence()" id="sIntelligence"></span></div>
+				</div>
+			</div>
+
+			<div class="clear">
+				<label>WEAPONS:</label>
+				<span data-bind="text: weaponsList" id="sWeapons"></span>
+			</div>
+			<div class="">
+				<label>ARMOR:</label><span data-bind="text: armorList" id="sArmor"></span>
+			</div>
+			<div class="">
+				<label>SPELLS:</label><span data-bind="text: spellsList" id="sSpells"></span>
+			</div>
+			<div>
+				<label>INVENTORY:</label><span data-bind="text: inventoryList" id="sInventory"></span>
+			</div>
+		</section>
+	</div>
+
+</div>
+	<script src="./lib/jquery-1.9.1.min.js"></script>
+	<script src="./lib/knockout-2.2.1.js"></script>
+	<script src="./app/uiir.background.js"></script>
+	<script src="./app/uiir.vehicles.js"></script>
+	<script src="./app/uiir.player.js"></script>
+	<script src="./app/uiir.map.js"></script>
+	<script src="./app/uiir.draw2.js"></script>
+	<script src="./app/uiir.images.js"></script>
+	<script src="./app/uiir.datafiles.maps.js"></script>
+	<script src="./app/uiir.modecommands.js"></script>
+	<script src="./app/uiir.commandhistory.js"></script>
+	<script src="./app/uiir.mode.loading.js"></script>
+	<script src="./app/uiir.mode.game.js"></script>
+	<script src="./app/uiir.mode.zats.js"></script>
+	<script src="./app/uiir.enginecore.js"></script>
+	<script src="./app/uiir.engine.js"></script>
+	<script src="./app/uiir.engine.debug.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

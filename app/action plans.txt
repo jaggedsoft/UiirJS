@@ -1,0 +1,136 @@
+1. action names need to be available
+2. actions can be prevented by incapacitations
+3. actions can be overriden by vehicles
+----------
+
+@@@@@@  modes:
+
+title screen
+character creation
+game (vehicles have overrides)
+flying
+orbiting
+space
+zats (b/f btwn game and dungeon mode -- enter zats w/ 2 different functions providing pickup function)
+view (entry similar to zats)
+dead
+loading (actually a function call of the load)
+
+
+@@@@@@  dead or title screen actions:
+
+all ignored except: (keys might differ)
+
+c - create player
+p - play saved game
+
+
+@@@@@@  character creation:
+
+special... might not be done similarly
+
+
+@@@@@@  flying actions:
+
+all ignored except:
+
+udlr [/;' - move(turn)
+l - land                'not here!!!'  -  do land
+?v - view (works?)
+?z - zats (works?)
+
+
+@@@@@@  orbiting actions:
+
+all ignored except:
+
+l - land                kills you  -  do land
+?v - view (works?)
+?z - zats (works?)
+
+
+@@@@@@  zats and view
+
+all keys - return to previous mode
+
+
+@@@@@@  game logic actions:
+
+all invalid except: (might config to ignore invalid)
+
+a - attack            do attack direct
+b - board             'what'  -  do board  -  'think again'?
+c - cast              'no spell'  -  do spell (does this happen for non spell caster?)
+d - descend           'what'  -  do descend
+e - enter             'what'  -  '[what type] [what name]'
+f - fire              'what'  -  (v)do fire direct
+g - get               'what'  -  '[what type]'
+h - hyper             'what'  (never in this mode should have flag for disabling stupid stuff like this and jump when not useful in the debug or conig or MAYBE at the package level)
+i - ignite            (see what happens with this in the game)
+j - jump              'Weee!'  (or something kind of stupid like that)
+k - klimb             'what'  - do ascend
+l - launch/land       'what'  -  (v)do launch  -  do land (plane or rocket logic)
+m - magic              do ready magic logic (what if not a spell caster?)
+n - negate time        'how? you're not einstein' - do negate (consider einstein cheat)
+o - offer gold         do offer gold direct
+p - pass               do pass, no consume
+q - quit or save game  do quit or save (might be a trick to this... prob ajax or something)
+r - ready weapon       do ready weapon logic (does this happen when you have none?)
+s - steal              do steal direct logic (does this work for non thieves?)
+t - transact           do transact direct
+u - unlock             do unlock direct (what about no keys?)
+v - view magic helm    do view (similar to zats... whole mode for this)
+w - wear               do ready armor logic
+x - xit                'think again'?  -  do exit logic
+y - yell               (allow text entry - prob i'll use this for cheats or something - does this ever do anything in ultima? find out)
+z - zats               do zats logic
+
+space - pass           do pass consume
+udlr, [/;'             do move logic
+
+object at location - b, d, e, g, k, [entry]
+	boardable	  - function to give vehicle
+	gettable	  - function to give items
+	[a/de]scendable   - function to ascend/descend
+	enterable	  - function to enter
+	walk trigger	  - function on walkover (support teleporter)
+
+terrain at location 
+	walk trigger      - function on walkover
+	bump trigger      - function on bump
+
+`` (enable/disable) objects prevent vehicle traversal
+`` (enable/disable) enter only on foot (might not be reasonable -- enter a cave/dungeon with a plane?)
+`` (enable/disable) quit or save only on foot (no reason NOT to allow this)
+`` (enable/disable) mobs can traverse objects
+`` (enable/disable) naming of what blocks movement
+`` (enable/disable) invalid command vs key ignore
+
+movement restrictions: (order??)  
+) terrain restriction
+) object restriction
+) mob restriction (can WALK over an enemy ship)
+
+
+# frigate
+
+	terrain mods
+	*board function can fail (no tassels)
+	f - fire direct
+
+
+# horse
+
+	doubled food consumption	
+
+
+# plane (can you taxi without reagents?)
+
+	terrain mods
+	l - launch plane (requires reagents)
+	
+
+# rocket (what requirements here, again?)
+
+	move - prevented. (any other actions ok?)
+	l - launch rocket (requires reagents?)

@@ -6,25 +6,50 @@
 html {
 	background: #333;
 	color: #dfdfdf;
+	font-family: 'Courier New';
+	font-size: 1em;
+	font-weight: bold;
+	line-height: 1em;
+	text-transform: uppercase;
 }
 
 body { 
+	font-size: .8216em; /* .8375em; */
+}
+
+body.uiir { 
 	font-family: 'Architects Daughter';
 }
 
+.uiir .numeric {
+	letter-spacing: 1px;
+}
+.uiir .basics .numeric {
+	display: inline-block;
+	float: right;
+	text-align: right;
+	width: 41px;
+}
+
 header {
+	font-family: 'Architects Daughter';
 	height: 2em;
 	position: relative;
 }
+
 header>p {
 	display: none;
+	font-size: 1.2em;
+	font-weight: normal;
 	height: 2em;
 	margin-top: 0;
 	padding-top: 0;
 	position: absolute;
+	text-transform: none;
 	top: 0;
 }
 #huiir {
+	font-size: 1.6em;
 	letter-spacing: 2px;
 }
 #hult {
@@ -55,18 +80,19 @@ button {
 
 .canvas_frame {
 	position: relative;
+	padding-bottom: 0;	
 }
 .canvas_frame, .canvas_backing, .canvas_blacking { 
 	height: 160px;
 	width: 320px;
 }
 .canvas_backing { 
-/*	background: #dedede url('../i/water.gif') 0 0; */
 	background: #dedede url('../i/aniwater.png') 0 0; 
 }
 .canvas_blacking {
 	background: #333;
 }
+
 canvas, .canvas_blacking {
 	position: absolute; 
 	top: 0;
@@ -84,51 +110,33 @@ canvas, .canvas_blacking {
 }
 
 #cmd_queue_shell { 
-	border: solid 1px #3f3f3f;
-	direction: rtl;
-	height: 4.5em;
-	overflow: auto;
-	margin-right: 102px; 
-}
-#cmd_queue {
+	border: 0;
 	direction: ltr;
-	font-size: .82em;
+	height: 4.8em;
+	position: relative;
+	overflow: hidden;
+	margin-right: 72px; 
+}
+
+#cmd_queue {
+	bottom: -1px;
+	direction: ltr;
+	padding: 0;
+	position: absolute;
+	word-wrap: break-word;
+	width: 248px;
+} 
+
+.uiir #cmd_queue_shell { 
+	margin-right: 85px;
+}
+
+.uiir #cmd_queue {
 	padding: 0 0.2em;
+	width: 228px;
 }
 
-table.cursor, table.keys {
-	float: left;
-	margin: 0;
-	padding: 0;
-}
-.keys td button, .cursor td, .cursor td button {
-	height: 20px;
-	margin: 0;
-	padding: 0;
-	width: 20px;
-}
-td button { 
-	line-height: 1em;
-}
 
-.cursor td button {
-	font-family: webdings;
-}
-
-td.alpharow {
-	padding-left: 20px;
-	width: 220px;
-}
-
-td.alpharow span {
-	display: inline-block;
-}
-td.alpharow span.row2 {
-	width: 10px;
-}
-td.alpharow span.row3 {
-	width: 20px;
-}
 .nv {
 	visibility: hidden;
 }
@@ -138,14 +146,25 @@ div, section {
 	padding: 0;
 }
 
-section, .gap {
+*.gap {
 	padding-bottom: 1em;
 }
 .nobr {
 	white-space: nowrap;
 }
+
+.aright {
+	text-align: right;
+}
+.acenter {
+	text-align: center;
+}
+
 .half {
 	width: 50%;
+}
+.iblock {
+	display: inline-block;
 }
 
 .right { 
@@ -154,25 +173,21 @@ section, .gap {
 .left {
 	float: left;
 }
-
-.aright {
-	text-align: right;
-}
-
 .clear {
 	clear: both;
 }
 
 label {
-	font-family: 'Courier New';
-	font-weight: bold;
 	display: inline-block;
-	margin-right: 0.25em;
-}
-div.tools span {
-	display: inline-block;
-	text-align: left;
-	width: 45px;
 }
 
-em { display: inline-block; padding-bottom: 4px; width: 50px; text-align: right; }
+.uiir label {
+	font-weight: bold;
+	margin-right: 0.25em;
+}
+
+.uiir div.tools span {
+	display: inline-block;
+	text-align: center;/* */
+	width: 1.6em;
+}

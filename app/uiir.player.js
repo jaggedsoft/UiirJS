@@ -47,12 +47,12 @@ uiir.Player = function(playerName) {
 	// be straight-up loaded along with all else after
 	// that.
 	var myStats = {
-		agility: ko.observable(10), // dexterity?
-		strength: ko.observable(10),
+		agility: ko.observable(66), // dexterity?
+		strength: ko.observable(11),
 		stamina: ko.observable(10),
-		intelligence: ko.observable(10),
-		wisdom: ko.observable(10),
-		charisma: ko.observable(10)
+		intelligence: ko.observable(34),
+		wisdom: ko.observable(56),
+		charisma: ko.observable(78)
 	}
 	
 	var myTools = {
@@ -156,17 +156,48 @@ uiir.Player = function(playerName) {
 		return s;
 	}, this);
 
+	var pads = ['0','0','00','000','0000'];
+	var pad = function(n,p) {
+		var c = pads[p];
+		n += '';
+		var cn = c + n;
+		var ret = (cn).slice(-c.length);
+		return ret;
+	}
+
+	var phits = function() {
+		return pad(myBasics.hits(), 4);
+	};
+	var pfood = function() {
+		return pad(myBasics.food(), 4);
+	};
+
 
 	return {
+		// game screen
 		name: myDescription.name,
-		description: myDescription,
-		hits: myBasics.hits,
 		isDead: isDead,
-		gold: myBasics.gold,
-		expr: myBasics.experience,
-		level: myLevel,
+		phits: function() { return pad(myBasics.hits(), 4); },
+		pfood: function() { return pad(myBasics.food(), 4); },
+		pexpr: function() { return pad(myBasics.experience(), 4); },
+		pgold: function() { return pad(myBasics.gold(), 4); },
+		hits: myBasics.hits,
 		food: myBasics.food,
+		expr: myBasics.experience,
+		gold: myBasics.gold,
+		// zats
+		level: myLevel,
+		description: myDescription,
+		ptorches: function() { return pad(myTools.torches(), 2); },
+		pkeys: function() { return pad(myTools.keys(), 2); },
+		ptools: function() { return pad(myTools.tools(), 2); },
 		tools: myTools,
+		pstrength: function() { return pad(myStats.strength(), 2); },
+		pagility: function() { return pad(myStats.agility(), 2); },
+		pstamina: function() { return pad(myStats.stamina(), 2); },
+		pcharisma: function() { return pad(myStats.charisma(), 2); },
+		pwisdom: function() { return pad(myStats.wisdom(), 2); },
+		pintelligence: function() { return pad(myStats.intelligence(), 2); },
 		stats: myStats,
 		weapons: myWeapons,
 		weaponsList: myWeaponsString,
