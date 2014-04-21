@@ -6,5 +6,29 @@ var uiir = uiir || {};
 //    .
 //
 //-----------------------------------------//
-// NOTE:  Should take advantage of prototyping so that shared functions aren't repeated on a per-terrain basis.
-// NOTE:  Might want to see if there's anything here that could be shared with mob, object, or player and separate it into a base
+
+uiir.terrain = {
+	terrainProto: {
+		image: null,
+		insertedindex: -1,
+		terrainEffects: [],
+		applyOnBump: false,
+		bump(inputStruct) {
+			if(applyOnBump) {
+				var f; 
+				for (f=0; f < terrainEffects.length; f += 1) {
+					if (typeof terrainEffects[f] === 'function') {
+						terrainEffects[f](inputStruct);
+					}
+				}
+			}
+		}
+	},
+	createone: function(initializer) {
+		var F = function(initStruct) {
+			image = initStruct.image || image;
+		};
+		F.prototype = terrainProto;
+		return new F(initializer)		
+	}
+};

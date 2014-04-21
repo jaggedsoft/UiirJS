@@ -6,7 +6,7 @@ var addDebug = function() {
 		uiir.engine.debug = uiir.engine.debug || {};
 
 		uiir.engine.debug.echoResultingVehicle = false;
-		uiir.engine.debug.showMoveCoords = false;
+		uiir.engine.debug.showMoveCoords = true;
 		uiir.engine.debug.write = { 
 			show: {
 				inputAcceptingAction: false,

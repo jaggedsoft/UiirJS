@@ -1,9 +1,8 @@
 var uiir = uiir || {};
 
-/*--------=### Map Class ###=---------*/
+/*--------=### Map class ###=---------*/
 //
 //    .
 //    .
 //
 //-----------------------------------------//
-// NOTE:  Should take advantage of prototyping so that shared functions aren't repeated on a per-map basis.

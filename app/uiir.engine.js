@@ -25,7 +25,7 @@ Notes: (in a block comment, because I'm stupid.)
 // TODO: Might want to add a few more comments.
 // TODO: remove the TODO's, by actually doing.
 
-uiir.engine = function(a, b, d) {
+uiir.engine = function() {
 
 	var that = this;
 
@@ -36,10 +36,6 @@ uiir.engine = function(a, b, d) {
 			shell: '#cmd_queue_shell',
 			size: 100,
 			target: '#cmd_queue'
-		},
-		output: {
-			canvasOne: a,
-			canvasTwo: b
 		},
 		retainLegacyBugs: { // for switchable fidelity to ult2
 			bumpSwampInShipDamage: true,
@@ -53,13 +49,13 @@ uiir.engine = function(a, b, d) {
 				normal: 130
 			},
 			fly: {
-				plane: 80,
+				plane: 70,
 				rocket: 110
 			},
 			walk: {
 				tick: 1800,
-				input: 400,
-				pass: 80
+				input: 300,
+				pass: 60
 			},
 			loading: 600
 		}
@@ -108,7 +104,7 @@ uiir.engine = function(a, b, d) {
 		keyUpDown: keyUpDown
 	};
 
-}('canvas_one','canvas_two');
+}();
 
 ko.applyBindings(uiir.engine);
 

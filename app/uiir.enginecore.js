@@ -5,10 +5,7 @@ uiir.EngineCore = function(configStructure) {
 	var that = this;
 
 	var config = configStructure;
-
-	// Drawing functionality
-	var output = new uiir.Canvas(config.output.canvasOne, config.output.canvasTwo);
-
+	
 	// Command History -- move into core.output?
 	var hist = new uiir.CommandHistory(config.history.target, 
 					   config.history.item, 
@@ -55,6 +52,9 @@ uiir.EngineCore = function(configStructure) {
 	tiles.ptl = uiir.images.players;	// players
 	tiles.vtl = uiir.images.vehicles;	// vehicles
 	tiles.mtl = uiir.images.players;	// mobs
+
+
+
 
 //########## Modes ##############################
 		/// Common API for different modes
@@ -223,7 +223,6 @@ uiir.EngineCore = function(configStructure) {
 		that.config = config;
 		that.hist = hist;
 		that.modes = modes;
-		that.output = output;
 		that.player = player;
 		that.playerPosition = playerPosition;
 		that.tiles = tiles;

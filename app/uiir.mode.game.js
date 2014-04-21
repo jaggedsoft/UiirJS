@@ -165,7 +165,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		// doEffects
 		core.consumeFood();
 		// doAI
-		draw();
+		// TODO: draw mobs and objects
 		if(core.player.hits() > 0) {
 			startForceActionGameNormal(true); // restart the gameTick
 		}
@@ -288,6 +288,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 				mapSize.y = (currentMap().size.y);
 				mapWrap = currentMap().type === "world";
 				viewMapIndices.fullyPopulate();
+				drawToMapCanvas();
 				return true;
 			}
 		}
@@ -463,6 +464,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 				hist.append('- Think again, ' + core.player.name);
 			}
 		}
+		drawPlayerTile();
 		return false;
 	}
 	
@@ -517,6 +519,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 				hist.append('blocked');
 			}
 		}
+		posMap();	
 		return retval;
 	}
 
@@ -549,7 +552,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		timers.counts.interval(timers.counts.interval()+1);
 		timers.autoMovement = setInterval(function() { 
 			movePlayer(x, y);
-			return draw();
+			return true; // umm?
 		}, dt);
 		return true;
 	}
@@ -564,7 +567,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 	viewMapIndices['x'] = [0,1,2,3,4,5,6,7,8,9,10,11,1,13,14,15,16,17,18,19];
 
 	/// fully populate the view indices for accelerated calculation of 
-	/// view to map x,y coordinates in preparation for draw
+	/// view to map x,y coordinates in preparation for draw // objects
 	viewMapIndices.fullyPopulate = function() { 
 		var px = core.playerPosition.x;
 		var py = core.playerPosition.y;
@@ -616,55 +619,100 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		}
 	};
 
-	// Generate a drawStructure for use in uiir.Canvas' fullDraw/drawFull
-	// based upon the player's location (by proxy -- the viewMapIndices) 
-	// and the current map. By this point, we don't actually care about
-	// wrapping, but we DO make use of the map's size to decide on using
-	// its out of bounds tile (oobTile).
-	draw = function() {
-		var m = currentMap();
-		var szx = m.size.x
-		var szy = m.size.y
-		var vx = 20, vy = 10;
-		var vmix = viewMapIndices['x'];
-		var vmiy = viewMapIndices['y'];
-		var drawStruct = {
-			arr: {},
-			tiles: core.tiles.tl
-		};
-		while(vy--) {
-			drawStruct.arr[vy] = {};
-			vx = 20;
-			if(vmiy[vy] < 0 || vmiy[vy] >= szy) {
-				while(vx--) {
-					drawStruct.arr[vy][vx] = m.oobTile;
+	function drawToMapCanvas() {
+		// get the canvas
+			var mdc = document.getElementById('mapdrawcanvas');
+		// get the context for it
+			var ctx = mdc.getContext('2d');
+		// size canvas to 1x1, invalidate it, and then size it to the map size
+			mdc.width = 1;
+			mdc.height = 1;
+			ctx.clearRect(0, 0, 1, 1);
+		// if the map wraps, add 1/2 view x and 1/2 view y to the size
+		var tcm = currentMap();
+		var oob = tcm.oobTile;
+		var tmsX = tcm.size.x; // map size x
+		var tmsY = tcm.size.y; // map size y
+		var tmwrap = tcm.type === "world"; // map wraps
+		var tvsX = 20; // view X
+		var tvsY = 10; // view Y
+		var tCsX = 16 * (tmsX + (tmwrap ? 0 : tvsX));
+		var tCsY = 16 * (tmsY + (tmwrap ? 0 : tvsY));
+		mdc.width = tCsX;
+		mdc.height = tCsY;
+		var tidxX = 0;
+		var tidxY = 0;
+		var dcY = 0;
+		var dcX = 0;
+		var txyidx = 0;
+		var tilesLength = core.tiles.tl.length;
+		var ttileidx = 0;
+		// for each 0 to y
+			for(tidxY = 0; tidxY < tmsY; tidxY++) {
+			// for each 0 to x
+				dcY = tidxY * 16;
+				for(tidxX = 0; tidxX < tmsX; tidxX++) {
+					// if not water, draw the image
+					dcX = 16 * tidxX;
+					ttileidx = tcm.data[tidxY][tidxX];
+					if(typeof(ttileidx) !== 'undefined' && ttileidx < tilesLength && ttileidx >= 0) {
+						ctx.drawImage(core.tiles.tl[ttileidx], dcX, dcY);
+					}
 				}
 			}
-			else {
-				while(vx--) {
-					// (mob || object) || terrain
-					// for now, just terrain
-					if(vmix[vx] < 0 || vmix[vx] >= szx) {
-						drawStruct.arr[vy][vx] = m.oobTile;
-					}
-					else {
-						var tileIndex = m.data[vmiy[vy]][vmix[vx]]; 
-						if(tileIndex >= 0 && tileIndex < drawStruct.tiles.length)
-						drawStruct.arr[vy][vx] = tileIndex;
-					}
+		// if not wraps and not map fill is water
+		if(!tmwrap && (typeof(oob) !== 'undefined')&& oob < tilesLength && oob >= 0) {
+			var bX = 0;
+			var bY = 0;
+		// for 0 to 1/2 view x (ceil)
+			bX = 16*tmsX;
+			for(tidxX = 0; tidxX < tvsX; tidxX++) {
+				// for 0 to y
+				dcX = bX + ( tidxX * 16 );
+				for(tidxY = 0; tidxY < tmsY; tidxY++) {
+					dcY = tidxY * 16;
+					// draw map fill image
+					ctx.drawImage(core.tiles.tl[oob], dcX, dcY);
 				}
-			} 
+			}
+			// for 0 to 1/2 view y (ceil)
+				// for 0 to x + 1/2 view x (ceil)
+					// draw mmap fill image
+			bX = 0;
+			bY = 16*tmsY;
+			for(tidxY = 0; tidxY < tvsY; tidxY++) {
+				// for 0 to y
+				dcY = bY + (tidxY * 16);
+				for(tidxX = 0; tidxX < (tmsX + tvsX); tidxX++) {
+					dcX = tidxX * 16;
+					// draw map fill image
+					ctx.drawImage(core.tiles.tl[oob], dcX, dcY);
+				}
+			}
 		}
-		// calculate player tile -- this might be better if it's done
-		// only each time that the player changes vehicle state.
+		// save the data image
+		var canvasImageDataURL = mdc.toDataURL();
+		var bgImageString = "url('" + canvasImageDataURL +"')";
+		var themapbg = document.getElementById('mapbackground');
+		themapbg.style.backgroundRepeat = 'repeat';
+		themapbg.style.backgroundImage = bgImageString;
+	}
+	
+	function posMap() {
+		var dx = -16 * (core.playerPosition.x - 9);
+		var dy = -16 * (core.playerPosition.y - 5);
+		var themapbg = document.getElementById('mapbackground');
+		themapbg.style.backgroundPosition = '' + dx + 'px ' + dy + 'px';
+	}
+
+	function drawPlayerTile() {
 		var playTile = core.tiles.ptl[0];
 		var vindex = core.vehicles[core.vehicles.length -1].vehicleTileIndex;
 		if(vindex >= 0) {
 			playTile = core.tiles.vtl[vindex];
 		}
-		drawStruct.tiles['player'] = playTile;
-		drawStruct.arr[5][9] = 'player';
-		core.output.drawFull(drawStruct);
+		var playerurl = "url('" + playTile.src + "')";
+		document.getElementById('playertile').style.backgroundImage = playerurl;
 	};
 
 	var noop = function(dataStructure) {
@@ -677,12 +725,14 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 
 	var unpause = function() {
 		hist.clear();
-		draw();
+		drawPlayerTile();
+		// TODO: calculate and draw the mobs and objects
 		startForceActionGameNormal();
 	};
 
 	var start = function() {
 		setMap('town');
+		posMap();
 		unpause();
 		core.modes.set('game');
 	};

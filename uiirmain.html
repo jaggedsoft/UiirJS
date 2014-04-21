@@ -3,8 +3,32 @@
 <head>
 	<title>UiirJS</title>
 	<link rel="stylesheet" href="./s/index.css" type="text/css" />
+	<style>
+	#mapdrawcanvas {
+		display: none;
+	}
+	.tile-size,
+	.ui-size {
+		box-sizing: border-box;
+		height: 16px;
+		overflow: hidden;
+		width: 16px;						
+	}
+	.ui-size {
+		height: 160px;
+		width: 320px;						
+	}
+	.tile-size {
+		background-color: #a00;
+	}
+	#playertile {
+		position: absolute;
+		top: 80px;
+		left: 144px;
+	}
+	</style>
 </head>
-<body>
+<body id="htmlbodyid">
 <div id="shellWidth">
 	<header>
 		<p id="huiir">Uiir</p>
@@ -18,9 +42,12 @@
 	<div data-bind="visible: mode() == 'game'">
 
 		<section class='canvas_frame'>
+			<canvas id="mapdrawcanvas"></canvas><!-- draws canvas on map switch -->
 			<div id="backer" class="cv canvas_backing">
-			<canvas height="160" width="320" class="cv" id="canvas_one"><span>No canvas for you.</span></canvas>
-			<canvas height="160" width="320" class="cv" id="canvas_two"><span>No canvas for you.</span></canvas>
+				<div id="mapbackground" class="ui-size">mapbg</div>
+				<canvas class="ui-size" id="mobobjscanvas1"></canvas>
+				<canvas class="ui-size" id="mobobjscanvas2"></canvas>
+				<div class="tile-size" id="playertile"></div>
 			</div>
 			<div id="blacker" class="cv canvas_blacking"></div>
 			<div id="youAreDead" data-bind="visible: player.isDead"><strong class="nobr"><span data-bind='text: player.name'>[player_name]</span> is dead.</strong></div>
@@ -102,7 +129,6 @@
 	<script src="./app/uiir.vehicles.js"></script>
 	<script src="./app/uiir.player.js"></script>
 	<script src="./app/uiir.map.js"></script>
-	<script src="./app/uiir.canvas.js"></script>
 	<script src="./app/uiir.images.js"></script>
 	<script src="./app/uiir.datafiles.maps.js"></script>
 	<script src="./app/uiir.modecommands.js"></script>
