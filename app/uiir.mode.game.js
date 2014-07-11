@@ -8,12 +8,13 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 	var config = core.config;
 	var hist = core.hist;
 
+// NOTE: Maybe leave out "unsorted" in the line below, and call it a day?
 //######## Unsorted junk #####################################
 
-	var inputHandler = function(key, isUp) {
+	function inputHandler(key, isUp) {
 		iHandleInputReceived(key, isUp);
 		return that;
-	};
+	}
 
 	var timers = {
 		counts: { 
@@ -25,9 +26,9 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		lastGameTick_ms: 0,
 		lastTickStop_ms: 0,
 		nowTick_ms: 0
-	};
+	},
 
-	var clearTimers = {
+	clearTimers = {
 		autoMovement: function() {
 			clearInterval(timers.autoMovement);
 			timers.autoMovement = null;
@@ -38,9 +39,9 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 			timers.gameTick = null;
 			timers.counts.timeout(timers.counts.timeout() - 1);
 		}
-	}
+	},
 
-	var input = {
+	input = {
 		acceptAction: false,
 		acceptDetail: false,
 		callback: null,
@@ -53,14 +54,14 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		value: null
 	};
 
-	var setAllowInputCallback = function(inputType, callback) {
+	function setAllowInputCallback(inputType, callback) {
 		clearInput();
 		input.acceptDetail = true;
 		input.detailType = inputType;
 		input.callback = callback;
 	}
 
-	var clearInput = function() {
+	function clearInput() {
 		input.acceptAction = false;
 		input.acceptDetail = false;
 		input.detailType = null;
@@ -72,14 +73,14 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 	}
 
 	// input dispatch
-	var iHandleInputReceived = function(key, up) { 
+	function iHandleInputReceived(key, up) { 
 		if(up === true) { // key release
 			return false; // for now
 		}
 		else {
 			if(!(input.acceptAction || input.acceptDetail)) {
 				if(isFlyingSomething()) {
-
+					// looks like we're not doing anything here
 				}
 				return false; // blocking all input
 			}
@@ -107,7 +108,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		return true;
 	}
 
-	var iHandleInactionGameNormal = function() {
+	function iHandleInactionGameNormal() {
 		// "if you choose not to decide, you still have made a choice."
 		input.acceptAction = false; // block to stop extra input
 		clearTimers.gameTick();
@@ -123,22 +124,22 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 	// between certain keydown/keyup
 
 	// passing time
-	var iDoPassKeyPress = function() { 
+	function iDoPassKeyPress() { 
 	}
 
-	var iDoPassKeyRelease = function() { 
+	function iDoPassKeyRelease() { 
 	}
 
 	// movement
-	var iDoMoveKeyPress = function() { 
+	function iDoMoveKeyPress() { 
 	}
 
-	var iDoMoveKeyRelease = function() { 
+	function iDoMoveKeyRelease() { 
 	}
 
 	// Game Loop, Game>Normal
 		// 1 Determine and Execute Action (player input or inaction)
-	var iLoopGameNormalAction = function() { 
+	function iLoopGameNormalAction() { 
 		// execute callback
 		if(typeof(input.callback) === 'function') {
 			input.callback();
@@ -161,7 +162,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 	}
 
 		// 2 Draw and Set Timer
-	var iLoopGameNormalDrawAndRepeat = function() { 
+	function iLoopGameNormalDrawAndRepeat() { 
 		// doEffects
 		core.consumeFood();
 		// doAI
@@ -172,8 +173,8 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 	}
 
 	// Game>Normal Inaction caused looping
-	// frominitial parameter does nothing :(
-	var startForceActionGameNormal = function(fromInitial) {
+	// frominitial parameter does nothing :( ... ?
+	function startForceActionGameNormal(fromInitial) {
 		clearInput();
 		timers.lastGameTick_ms = (new Date()).getTime();
 		input.acceptAction = true;
@@ -186,19 +187,20 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		timers.lastTickStop_ms = 0;
 	}
 
-	var stopForceActionGameNormal = function() {
+	function stopForceActionGameNormal() {
 		timers.lastTickStop_ms = (new Date()).getTime();
 		clearTimers.gameTick();
 	}
 
 	// Determine timing on tick start/restart
-	var waitHowLongGameNormal = function() {
-		var gk = input.gotKey;
-		var tickDelay = gk ? 
+	function waitHowLongGameNormal() {
+		var gk = input.gotKey,
+			tickDelay = gk ? 
 			((input.lastKey == 32 || input.lastKey == 80) ? 
 				config.timing.walk.pass : 
 				config.timing.walk.input) : 
 			config.timing.walk.tick;
+		
 		if(gk && (timers.lastTickStop_ms > timers.lastGameTick_ms)) {
 			// restarting an interrupted timer
 			tickDelay -= (timers.lastTickStop_ms - timers.lastGameTick_ms);
@@ -218,7 +220,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 
 	// super temporary. going to replace with mode input mapping.
 	// i realize it's bullshit -- again, temporary.
-	var setCallbackByMode = function() {
+	function setCallbackByMode() {
 		// get the current mask based upon lastKey
 		// valid or !ignore invalid == process second state
 			if(isFlyingSomething()) {
@@ -234,7 +236,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 					case 76: input.callback = kL; break;
 					case 48: input.callback = k0; break;
 					default: input.callback = null; break;
-				};
+				}
 			}
 			else {
 				switch(input.lastKey) {
@@ -253,23 +255,26 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 					case 90: input.callback = kZ; break;
 					case 48: input.callback = k0; break;
 					default: input.callback = null; break;
-				};
+				}
 			}
 	}
 
 	// Maps
-	var maps = [ uiir.datafiles.map000, uiir.datafiles.map001 ]; // array from uiir.datafiles.maps
-	var currentMapIndex = ko.observable(0);
-	var currentMap = ko.computed(function() {
-		return maps[currentMapIndex()];
-	}, this);	
+	// NOTE: Hopefully this is temporary?
+	//       the maps var below looks inadvisable.
+	var maps = [ uiir.datafiles.map000, uiir.datafiles.map001 ], // array from uiir.datafiles.maps
+		currentMapIndex = ko.observable(0),
 
-	var mapSize = { 
-		x: 1,
-		y: 1
-	};
+		currentMap = ko.computed(function() {
+						return maps[currentMapIndex()];
+					}, this),	
 
-	var setMap = function(mapName, pX, pY) {
+		mapSize = { 
+			x: 1,
+			y: 1
+		};
+
+	function setMap(mapName, pX, pY) {
 		var i = maps.length;
 		while(i--) {
 			if(maps[i].name == mapName) {
@@ -294,7 +299,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		}
 	}
 
-	var doLeaveTown = function() {
+	function doLeaveTown() {
 
 		core.loading({ timing: { minimum_ms: core.config.timing.loading }});
 
@@ -328,7 +333,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 
 	// corrects the location 'n' so it either fits within the map 
 	// (if it's wrapped), or -2 if not.
-	var mapCorrect = function(n, isX) {
+	function mapCorrect(n, isX) {
 		var limit = isX ? mapSize.x : mapSize.y;
 		if(n >= 0 && n < limit) {
 			return n;
@@ -338,27 +343,34 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		}
 		// oob!
 		return -2;
-	};
+	}
 
-	var k0 = function() { return hist.toggleScrollBar(); }
-	var kL = function() { return LoL(); }
-	var kX = function() { return doXit(); }
-	var kZ = function() { return doZats(); }
+	// NOTE: SUPER terrible function naming. WTF, me?
+	// Ahh, I see now they're the short names for keypress
+	// handlers.  Still sucks.
+	function k0() { return hist.toggleScrollBar(); }
+	function kL() { return LoL(); }
+	function kX() { return doXit(); }
+	function kZ() { return doZats(); }
 
 	// player movement interface functions
-	var iDoUp = function() { 
+	// NOTE: names suck.
+	function iDoUp() { 
 		hist.append('North');
 		turn(0,-1); 
 	}
-	var iDoDown = function() { 
+
+	function iDoDown() { 
 		hist.append('South');
 		turn(0,1); 
 	}
-	var iDoLeft = function() { 
+
+	function iDoLeft() { 
 		hist.append('West');
 		turn(-1,0); 
 	}
-	var iDoRight = function() { 
+
+	function iDoRight() { 
 		hist.append('East');
 		turn(1,0); 
 	}
@@ -370,11 +382,12 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 	// L
 	// TODO: Quit being a toolbox and stop using acronyms
 	// TODO: Devise a better plan for mode.
-	var LoL = function() {
-		var retval;
-		var flying = isFlyingSomething();
+	function LoL() {
+		var retval,
+			flying = isFlyingSomething(),
+			veh = core.vehicles[core.vehicles.length - 1];
+
 		hist.append(flying ? 'Land' : 'Launch');
-		var veh = core.vehicles[core.vehicles.length - 1];
 
 		// myPlayer.vehicle // in a computed?
 
@@ -395,11 +408,11 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 				hist.append('what??');
 				retval = false;
 			}
-		}; // end switch
+		} // end switch
 		return retval;
 	}
 
-	var landOrLaunchPlane = function() {
+	function landOrLaunchPlane() {
 		if(!isFlyingSomething()) {
 
 			clearTimers.gameTick();
@@ -424,7 +437,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		return true;
 	}
 
-	var landOrLaunchRocket = function() {
+	function landOrLaunchRocket() {
 		if(!isFlyingSomething()) {
 			// move to initiate orbit
 			// autoMovement(0, -1, config.timing.fly.rocket);
@@ -441,16 +454,17 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 	}
 	
 	// P - PASS (going to be a little tricky because the button is bullsh*t)
-	var passTime = function() {
+	function passTime() {
 		hist.append('Pass');
 		return true;
 	}
-	var passConsume = function() { // no need for extra alias
+
+	function passConsume() { // no need for extra alias
 		return passTime();
 	}
 
 	// X - (e)Xit
-	var doXit = function() {
+	function doXit() {
 		if(!isFlyingSomething()) {
 			hist.append('Exit');
 			var len = core.vehicles.length - 1;
@@ -469,7 +483,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 	}
 	
 	// Z - STATUS SCREEN TOGGLE - "Zats" because obviously Gariott wrote Steal before Status?
-	var doZats = function() {
+	function doZats() {
 		pause();
 		core.zats({ callback: unpause });
 		return true;
@@ -487,14 +501,14 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		rocket: false
 	};
 
-	var isFlyingSomething = function() {
+	function isFlyingSomething() {
 		return isFlying.plane || isFlying.rocket;
 	}
 
 
 
 	// Simple Movement
-	var movePlayer = function(x, y, checkMovement) {
+	function movePlayer(x, y, checkMovement) {
 		var retval;
 		var nx = mapCorrect(core.playerPosition.x + x, true);
 		var ny = mapCorrect(core.playerPosition.y + y, false);
@@ -523,7 +537,7 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		return retval;
 	}
 
-	var turn = function(x, y) {
+	function turn(x, y) {
 		var retval;
 		if(!isFlyingSomething()) {
 			retval = movePlayer(x, y, true);
@@ -541,11 +555,11 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 	var lastAutoMove = {
 		x: 0,
 		y: 0
-	}
+	};
 
 	// timers.autoMovement
 
-	var autoMovement = function(x, y, dt) {
+	function autoMovement(x, y, dt) {
 		clearTimers.autoMovement();
 		lastAutoMove.x = x;
 		lastAutoMove.y = y;
@@ -562,13 +576,15 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 
 
 
-       	var viewMapIndices = {};
-	viewMapIndices['y'] = [0,1,2,3,4,5,6,7,8,9];
-	viewMapIndices['x'] = [0,1,2,3,4,5,6,7,8,9,10,11,1,13,14,15,16,17,18,19];
+    var viewMapIndices = {
+    	x: [0,1,2,3,4,5,6,7,8,9,10,11,1,13,14,15,16,17,18,19],
+    	y: [0,1,2,3,4,5,6,7,8,9]
+    };
+
 
 	/// fully populate the view indices for accelerated calculation of 
 	/// view to map x,y coordinates in preparation for draw // objects
-	viewMapIndices.fullyPopulate = function() { 
+	viewMapIndices.fullyPopulate = function() {  
 		var px = core.playerPosition.x;
 		var py = core.playerPosition.y;
 		var viX = px - 9;
@@ -578,11 +594,12 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		var sx = mapSize.x, sy = mapSize.y;
 		for(idx = 0; idx < 20; idx++, viX++, viY++) {
 			if(idx < 10) {
-				viewMapIndices['y'][idx] = (!w || (viY > 0 && viY < sy)) ? viY : ((viY + sy) % sy); 
+				viewMapIndices.y[idx] = (!w || (viY > 0 && viY < sy)) ? viY : ((viY + sy) % sy); 
 			}
-			viewMapIndices['x'][idx] = (!w || (viX > 0 && viX < sx)) ? viX : ((viX + sx) % sx);
+			viewMapIndices.x[idx] = (!w || (viX > 0 && viX < sx)) ? viX : ((viX + sx) % sx);
 		}
 	};
+
 	/// correct view's map indices according to direction moved 
 	/// (+/- 1 in x XOR y direction)
 	viewMapIndices.adjustForMovement = function(x, y) {
@@ -713,29 +730,29 @@ uiir.modes.GameMode = function(uiirCoreObject) {
 		}
 		var playerurl = "url('" + playTile.src + "')";
 		document.getElementById('playertile').style.backgroundImage = playerurl;
-	};
+	}
 
-	var noop = function(dataStructure) {
+	function noop(dataStructure) {
 		return that;
-	};
+	}
 
-	var pause = function() {
+	function pause() {
 		stopForceActionGameNormal();
-	};
+	}
 
-	var unpause = function() {
+	function  unpause() {
 		hist.clear();
 		drawPlayerTile();
 		// TODO: calculate and draw the mobs and objects
 		startForceActionGameNormal();
-	};
+	}
 
-	var start = function() {
+	function start() {
 		setMap('town');
 		posMap();
 		unpause();
 		core.modes.set('game');
-	};
+	}
 
 	/// ModeAPI
 	return {

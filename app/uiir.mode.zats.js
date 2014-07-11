@@ -24,21 +24,21 @@ uiir.modes.ZatsMode = function(uiirCoreObject) {
 	var name = 'zats';
 	var acceptInput = false;
 
-	var inputHandler = function(key, isUp) {
+	function inputHandler(key, isUp) {
 		if(acceptInput) { // eats input for a period of time
 			uiirCore.modes.transition.end();
 		}
 		return that;
-	};
+	}
 
-	var reinit = function() {
+	function reinit() {
 		acceptInput = false; // eat input for a period of time
 		setTimeout(function() { acceptInput = true; }, 750);
-	};
+	}
 
-	var noop = function(dataStructure) {
+	function noop(dataStructure) {
 		return that;
-	};
+	}
 
 	/// ModeAPI
 	return {

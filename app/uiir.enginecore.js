@@ -2,31 +2,32 @@ var uiir = uiir || {};
 
 uiir.EngineCore = function(configStructure) {
 
-	var that = this;
-
-	var config = configStructure;
-	
+	var that = this,
+		playereffects = {},
+		tiles = {},
+		modes = {},		
+		transitionfunctions = {},
+		config = configStructure,
 	// Command History -- move into core.output?
-	var hist = new uiir.CommandHistory(config.history.target, 
+		hist = new uiir.CommandHistory(config.history.target, 
 					   config.history.item, 
 					   config.history.size, 
-					   config.history.shell);
+					   config.history.shell),
 
 	// Player
-	var player = new uiir.Player('Josser'); // todo: put location on player
+		player = new uiir.Player('Josser'), // todo: put location on player
 
-	var playerPosition = {
-		x: -2,
-		y: -2
-	}; // is there some reason we shouldn't put x,y location on the Player?
+		playerPosition = {
+			x: -2,
+			y: -2
+		}, // is there some reason we shouldn't put x,y location on the Player?
 
 	// Player's vehicles. These may be pointers, 
 	// but they don't so much belong here, and should be
 	// moved into player like position should be.
-	var vehicles = [ uiir.vehicles.onFoot, uiir.vehicles.plane ];
+		vehicles = [ uiir.vehicles.onFoot, uiir.vehicles.plane ];
 
 	// Player effects
-	var playereffects = {};
 	playereffects.consumeFood = function() {
 		// todo: fix this
 		// probably this'll go into the game mode
@@ -44,10 +45,9 @@ uiir.EngineCore = function(configStructure) {
 		else {
 			player.food(tempFood);
 		}
-	}
+	};
 
 	// Tiles -- todo: condense to one array 
-	var tiles = {};
 	tiles.tl = uiir.images.terrains;	// terrain
 	tiles.ptl = uiir.images.players;	// players
 	tiles.vtl = uiir.images.vehicles;	// vehicles
@@ -66,15 +66,14 @@ uiir.EngineCore = function(configStructure) {
 		///	restart (?)
 		///	name
 
-	var modes = {};
-	modes['game'] = null; // new uiir.modes.GameMode(that);
-	modes['zats'] = null; //new uiir.modes.ZatsMode(that);
-	modes['loading'] = null; //new uiir.modes.LoadingMode(that);
-	modes['title'] = null;
-	modes['space'] = null;
-	modes['create'] = null;
-	modes['dungeon'] = null;
-	modes['current'] = ko.observable(null);
+	modes.game = null; // new uiir.modes.GameMode(that);
+	modes.zats = null; //new uiir.modes.ZatsMode(that);
+	modes.loading = null; //new uiir.modes.LoadingMode(that);
+	modes.title = null;
+	modes.space = null;
+	modes.create = null;
+	modes.dungeon = null;
+	modes.current = ko.observable(null);
 		// there may be a better way to do current. I'm a little
 		// concerned about the overhead of hitting an observable
 		// with every key press.
@@ -82,13 +81,13 @@ uiir.EngineCore = function(configStructure) {
 
   //@ direct mode manipulation
 	modes.get = function() {
-		return modes['current']().name;
+		return modes.current().name;
 	};
 
 	modes.set = function(nameString) {
 		if(nameString) {
 			if(modes[nameString]) {
-				modes['current'](modes[nameString]);
+				modes.current(modes[nameString]);
 			}
 		}
 	};
@@ -118,6 +117,7 @@ uiir.EngineCore = function(configStructure) {
 		// the specified name.  Otherwise, set it to the current mode.
 		// TODO: I really ought to be doing more input
 		//	 validation.
+		var hasTiming = false;
 
 		dataStructure.endTransition = dataStructure.endTransition || {};
 		dataStructure.timing = dataStructure.timing || {};
@@ -126,9 +126,9 @@ uiir.EngineCore = function(configStructure) {
 			dataStructure.endTransition.switchToMode = modes[dataStructure.endTransition.switchToMode];
 		}
 		else {
-			dataStructure.endTransition.switchToMode = modes['current']();
+			dataStructure.endTransition.switchToMode = modes.current();
 		}
-		var hasTiming = false;
+
 		if(dataStructure.timing.minimum_ms) {
 			if(dataStructure.timing.minimum_ms > 0) {
 				hasTiming = true;
@@ -177,17 +177,16 @@ uiir.EngineCore = function(configStructure) {
 		if(d.endTransition.callback) {
 			d.endTransition.callback(d.endTransition.callbackParams);
 		}
-		modes['current'](d.endTransition.switchToMode);
+		modes.current(d.endTransition.switchToMode);
 		modes.transition.data = {};
 		return true;
 	};
 
   //@ Transition functions
-	var transitionfunctions = {};
 	transitionfunctions.loading = function(dataStructure) {
 		dataStructure.transitionMode = 'loading';
 		modes.transition.set(dataStructure);
-	}
+	};
 
 	transitionfunctions.zats = function(callbackStructure) {
 		var data = {
@@ -203,9 +202,9 @@ uiir.EngineCore = function(configStructure) {
 			}
 		};
 		ko.applyBindings(uiir.engine);
-		modes['zats'].start();
+		modes.zats.start();
 		modes.transition.set(data);
-	}
+	};
 
 
 //########## END: Modes ################################################
@@ -237,11 +236,11 @@ uiir.EngineCore = function(configStructure) {
 
 
 	// mode set using 'that'
-	modes['game'] = new uiir.modes.GameMode(that);
-	modes['zats'] = new uiir.modes.ZatsMode(that);
+	modes.game = new uiir.modes.GameMode(that);
+	modes.zats = new uiir.modes.ZatsMode(that);
 
-	that.ctimeout = modes['game'].ctimeout;
-	that.cinterval = modes['game'].cinterval;
+	that.ctimeout =  modes.game.ctimeout;
+	that.cinterval = modes.game.cinterval;
 
 	// return public api 'that'
 	return that;

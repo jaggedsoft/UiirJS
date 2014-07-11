@@ -1,5 +1,5 @@
 var uiir = uiir || {};
-
+(function(uiir){
 /*
 
 Notes: (in a block comment, because I'm stupid.)
@@ -25,7 +25,7 @@ Notes: (in a block comment, because I'm stupid.)
 // TODO: Might want to add a few more comments.
 // TODO: remove the TODO's, by actually doing.
 
-uiir.engine = function() {
+uiir.engine = (function() {
 
 	var that = this;
 
@@ -64,7 +64,7 @@ uiir.engine = function() {
 
 //## API + Auto-executed bits:
 
-	var autoExecutedStartup = function() {
+	(function autoExecutedStartup() {
 
 		// start the whole screen fadein, the title fading, 
 		// and the background water movement.  
@@ -72,7 +72,7 @@ uiir.engine = function() {
 		uiir.background(core.config.backgroundTarget, core.config.timing.background.normal).start();		
 
 		//## start game mode
-		core.modes['game'].start();
+		core.modes.game.start();
 
 		// bind input for the api
 		$(document).ready(function() {
@@ -86,11 +86,11 @@ uiir.engine = function() {
 			$body.focus();
 		});
 
-	}(); // IIFE
+	}());
 
 
 	var keyUpDown = function(key, up) {
-		core.modes['current']().handleInput(key, up);
+		core.modes.current().handleInput(key, up);
 		return that;
 	};
 
@@ -104,11 +104,11 @@ uiir.engine = function() {
 		keyUpDown: keyUpDown
 	};
 
-}();
+}());
 
 ko.applyBindings(uiir.engine);
 
-
+}(uiir));
 
 
 

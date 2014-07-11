@@ -1,5 +1,19 @@
 var uiir = uiir || {};
 
+// editorial notes:
+/*
+
+
+I've been working with decision 
+logic and an inventory system 
+which probably obsolete large parts 
+of this file. pretty much 
+everything is an inventory item in 
+the new scheme.
+
+
+*/
+
 /*--------=### Player View Model ###=---------*/
 //
 //    Player is a collection of collections
@@ -17,8 +31,7 @@ uiir.Player = function(playerName) {
 		gender: "male",
 		race: "human",
 		type: "fighter",
-	}
-
+	},
 	// This is the only set of values which actually
 	// needs to be observable.  Zats items do not, as
 	// doZats can be rewritten to re-apply bindings
@@ -27,40 +40,42 @@ uiir.Player = function(playerName) {
 	// item and using taking advantage of ko's ability
 	// to bind visibility to a function something like 
 	// 'count > 0'
-	var myBasics = {
+	myBasics = {
 		hits: ko.observable(400),
 		gold: ko.observable(400),
 		experience: ko.observable(0),
 		food: ko.observable(400)
-	}
+	},
 
-	var isDead = ko.computed(function() {
+	isDead = ko.computed(function() {
 		return myBasics.hits() <= 0;
-	}, this);
-	var myLevel = ko.computed(function() {
+	}, this),
+
+	myLevel = ko.computed(function() {
 		var e = myBasics.experience();
 		return (e - (e % 1000))  / 1000;
-	}, this);
+	}, this),
 	
 	// stats will be set at a base of ten each, and
 	// modified by character creation once.  it'll 
 	// be straight-up loaded along with all else after
 	// that.
-	var myStats = {
+	myStats = {
 		agility: ko.observable(66), // dexterity?
 		strength: ko.observable(11),
 		stamina: ko.observable(10),
 		intelligence: ko.observable(34),
 		wisdom: ko.observable(56),
 		charisma: ko.observable(78)
-	}
+	},
 	
-	var myTools = {
+	myTools = {
 		keys: ko.observable(0),
 		tools: ko.observable(0),
 		torches: ko.observable(0)	
-	}
-	var myInventory = {
+	},
+
+	myInventory = {
 		ankhs: ko.observable(0),	
 		blueTassles: ko.observable(0),
 		brassButtons: ko.observable(0),
@@ -69,8 +84,9 @@ uiir.Player = function(playerName) {
 		skullKeys: ko.observable(0),
 		strangeCoins: ko.observable(0),
 		triLithiums: ko.observable(0)
-	}
-	var myWeapons = {
+	},
+
+	myWeapons = {
 		daggers: ko.observable(0),
 		maces: ko.observable(0),
 		axes: ko.observable(0),
@@ -80,9 +96,9 @@ uiir.Player = function(playerName) {
 		lightSwords: ko.observable(0),
 		phazors: ko.observable(0),
 		quickSwords: ko.observable(0)
-	}
+	},
 	
-	var myArmor = {
+	myArmor = {
 		cloth: ko.observable(0),
 		leather: ko.observable(0),
 		chain: ko.observable(0),
@@ -90,29 +106,29 @@ uiir.Player = function(playerName) {
 		vaccuum: ko.observable(0),
 		reflect: ko.observable(0), // is this a thing?
 		power: ko.observable(0)
-	}
+	},
 
-	var myClericSpells = {
+	myClericSpells = {
 		passwall: ko.observable(0)
-	}
+	},
 
-	var myWizardSpells = {
+	myWizardSpells = {
 		magicMissle: ko.observable(0)
-	}
+	},
 
 	// TODO: replace with ko templating when using inventory items.
 	//       This would also support user-custom inventory (hot shit.)
-	var getString = function(mustExceed, isActually, thenWrite, currentString) {
+	getString = function(mustExceed, isActually, thenWrite, currentString) {
 		if( mustExceed < isActually) {
 			if(currentString.length > 0) {
-				thenWrite = ', ' + thenWrite
+				thenWrite = ', ' + thenWrite;
 			}
 			return thenWrite + ': ' + isActually;	
 		}
 		return '';
-	};
+	},
 
-	var myArmorString = ko.computed(function() {
+	myArmorString = ko.computed(function() {
 		var n = 0;
 		var s = '';
 		s += getString(n, myArmor.cloth(), 'cloth', s);
@@ -123,10 +139,9 @@ uiir.Player = function(playerName) {
 		s += getString(n, myArmor.reflect(), 'reflect', s);
 		s += getString(n, myArmor.power(), 'power', s);
 		return s;
-	}, this);
+	}, this),
 
-
-	var myWeaponsString = ko.computed(function() {
+	myWeaponsString = ko.computed(function() {
 		var n = 0;
 		var s = '';
 		s += getString(n, myWeapons.daggers(), 'daggers', s);
@@ -139,39 +154,40 @@ uiir.Player = function(playerName) {
 		s += getString(n, myWeapons.phazors(), 'phazors', s);
 		s += getString(n, myWeapons.quickSwords(), 'quickswords', s);
 		return s;
-	}, this);
+	}, this),
 
-	var mySpellsString = ko.computed(function() {
+	mySpellsString = ko.computed(function() {
 		var n = 0;
 		var s = '';
 		s += getString(n, myClericSpells.passwall(), 'passwall', s);
 		s += getString(n, myWizardSpells.magicMissle(), 'magic missle', s);
 		return s;
-	}, this);
+	}, this),
 
-	var myInventoryString = ko.computed(function() {
+	myInventoryString = ko.computed(function() {
 		var n = 0;
 		var s = '';
 		//s += getString(n, , '', s);
 		return s;
-	}, this);
+	}, this),
 
-	var pads = ['0','0','00','000','0000'];
-	var pad = function(n,p) {
+	pads = ['0','0','00','000','0000'],
+	pad = function(n,p) {
 		var c = pads[p];
 		n += '';
 		var cn = c + n;
 		var ret = (cn).slice(-c.length);
 		return ret;
-	}
+	},
 
-	var phits = function() {
+	phits = function() {
 		return pad(myBasics.hits(), 4);
-	};
-	var pfood = function() {
-		return pad(myBasics.food(), 4);
-	};
+	},
 
+	pfood = function() {
+		return pad(myBasics.food(), 4);
+	},
+	ZZZ_END_VARS = 0;
 
 	return {
 		// game screen
@@ -209,4 +225,4 @@ uiir.Player = function(playerName) {
 		inventory: myInventory,
 		inventoryList: myInventoryString
 	};
-}
+};

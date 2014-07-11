@@ -1,5 +1,12 @@
 var uiir = uiir || {};
 
+// NOTES:
+// I haven't looked deeper into this yet, just fixing immediate
+// problems with jshint, and changing function declaration 
+// patterns, but it looks like I do a lot of the same types 
+// of things over and over, which isn't very DRY. this file 
+// definitely needs some extra TLC. "ModeCommands" is incomplete.
+
 /// A collection of key/command pairs and a mode to which they apply
 /// for use in action delegation dependent on game mode
 uiir.ModeKeyCommands = function(mode, defaultCmd) {
@@ -9,7 +16,7 @@ uiir.ModeKeyCommands = function(mode, defaultCmd) {
 	if(typeof(mode) === 'undefined') {
 		throw 'Missing parameter \'mode\' in ModeKeyCommands(???, ???).';
 	}
-	if(!(typeof(defaultCmd) === 'function')) {
+	if(typeof(defaultCmd) !== 'function') {
 		throw 'Missing or invalid parameter \'defaultCmd\' in ModeKeyCommands(\'' + mode + '\', ???). It should be a function.';
 	}
 
@@ -81,7 +88,7 @@ uiir.ModeKeyCommands = function(mode, defaultCmd) {
 		if(typeof(key) === 'undefined') {
 			throw 'ModeKeyCommands: Missing parameter \'key\' in addKeyCommand for mode \'' + _mode + '\'.';
 		}
-		if(!(typeof(cmd) === 'function')) {
+		if(typeof(cmd) !== 'function') {
 			throw 'ModeKeyCommands: Missing or invalid parameter \'cmd\' in addKeyCommand for mode \'' + _mode + '\'. It should be a function.';
 		}
 
@@ -89,14 +96,14 @@ uiir.ModeKeyCommands = function(mode, defaultCmd) {
 		keyAlreadyTranslated = (typeof(keyAlreadyTranslated) === 'undefined') ? false : keyAlreadyTranslated;
 		key = keyAlreadyTranslated ? key : mapKey(key);
 
-		if(key == 0) {
+		if(key === 0) {
 			throw 'ModeKeyCommands: Cannot use addKeyCommand to redefine default command for mode \'' + _mode + '\'. Use resetDefaultCommand instead.';
 		}
-		if(_cmds[key] == null || overwriteDuplicateRatherThanExcept) {
+		if(_cmds[key] === null || overwriteDuplicateRatherThanExcept) {
 			_cmds[key] = cmd;
 		}
 		else {
-			throw 'ModeKeyCommands: Command for mode \'' + _mode + '\', key \'' + key + '\', already defined.'
+			throw 'ModeKeyCommands: Command for mode \'' + _mode + '\', key \'' + key + '\', already defined.';
 		}
 		return true;
 	}; // end of addKeyCommand
@@ -111,7 +118,7 @@ uiir.ModeKeyCommands = function(mode, defaultCmd) {
 
 	/// Reassign default command mapping
 	var resetDefaultCommand = function(cmd) {
-		if(!(typeof(cmd) === 'function')) {
+		if(typeof(cmd) !== 'function') {
 			throw 'ModeKeyCommands: Missing or invalid parameter \'cmd\' in resetDefaultCommand for mode \'' + _mode + '\'. It should be a function.';
 		}
 		_cmds[0] = cmd;
@@ -140,16 +147,18 @@ uiir.ModeKeyCommands = function(mode, defaultCmd) {
 		resetDefaultCommand: resetDefaultCommand
 	};
 
-} // end ModeKeyCommands
+}; // end ModeKeyCommands
 
 
 /// A collection of mappings between mode and key commands
 /// and functions surrounding them and for adding/getting commands
+// NOTE: I only see {} being returned from this, which means this
+//       class is definitely unfinished. :(
 uiir.ModeCommands = function(defaultCmd) {
 	
 	// ## Ctor guards (throw on bad or missing parameters)
 
-	if(!(typeof(defaultCmd) === 'function')) {
+	if(typeof(defaultCmd) !== 'function') {
 		throw 'Missing or invalid parameter \'defaultCmd\' in ModeCommands(???). It should be a function.';
 	}
 
@@ -163,16 +172,16 @@ uiir.ModeCommands = function(defaultCmd) {
 	
 	// ## Private functions
 
-	var findModeIndex = function(mode, preventRecurse) {
-		if(!(typeof(mode) === 'undefined' || mode == null || mode == "")) {
+	 function findModeIndex(mode, preventRecurse) {
+		if(!(typeof(mode) === 'undefined' || mode === null || mode === "")) {
 			var i = _modeKeyCommands.length;
 			while(i--) {
 				if(_modeKeyCommands[i].mode === mode) {
 					return i;
 				}
-			};
+			}
 		}
-		if(!(typeof(_defaultMode) === 'undefined' || mode == _defaultMode || _defaultMode == null || _defaultMode == "")) {
+		if(!(typeof(_defaultMode) === 'undefined' || mode === _defaultMode || _defaultMode === null || _defaultMode === "")) {
 			if(typeof(preventRecurse) === 'undefined' || !preventRecurse) {
 				return findModeIndex(_defaultMode);
 			}
@@ -183,7 +192,7 @@ uiir.ModeCommands = function(defaultCmd) {
 	// ## Public functions (returned by the public interface)
 
 	/// set default mode for application of add/get key commands, if not specified by call
-	var setDefaultMode = function(defaultMode) {
+	 function setDefaultMode(defaultMode) {
 		if(typeof(defaultMode) === 'undefined') {
 			throw 'ModeCommands: Missing parameter \'defaultMode\' in setDefaultMode.';
 		}
@@ -192,15 +201,15 @@ uiir.ModeCommands = function(defaultCmd) {
 		}
 		_defaultMode = defaultMode;
 		return true;
-	};
+	}
 
 	/// add a command mode (walk, zats, etc)
-	var addMode = function(mode, defaultCmd, idm, idmdc) {
-		if(typeof(mode) === 'undefined' || mode == null || mode == "") {
+	 function addMode(mode, defaultCmd, idm, idmdc) {
+		if(typeof(mode) === 'undefined' || mode === null || mode === "") {
 			throw 'ModeCommands: Missing parameter \'mode\' in addMode.';
 		}
 
-		if(!(typeof(defaultCmd) === 'function')) {
+		if(typeof(defaultCmd) !== 'function') {
 			defaultCmd = _defaultCmd;
 		}
 
@@ -223,23 +232,23 @@ uiir.ModeCommands = function(defaultCmd) {
 			_modeKeyCommands.push(newMode);
 		}
 		return true;
-	};
+	}
 
 	/// add command mapping to mode
-	var addCmd = function(key, cmd, mode, buildNonexistentModes) {
+	function addCmd(key, cmd, mode, buildNonexistentModes) {
 		var existingModeIndex = findModeIndex(mode);
 		if(existingModeIndex < 0) {
 		}
-	};
+	}
 
 	/// get command mapping from mode
-	var getCmd = function(key, mode) {
-	};
+	function getCmd(key, mode) {
+	}
 	
 	// ## Public interface
 
 	return {
 	};
 
-} // end ModeCommands
+}; // end ModeCommands
 
